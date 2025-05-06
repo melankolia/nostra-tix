@@ -1,0 +1,25 @@
+spring:
+  application:
+    name: nostra-tix
+  datasource:
+    hikari:
+      connection-timeout: 30000
+      idle-timeout: 600000
+      max-lifetime: 1800000
+      maximum-pool-size: 10
+    url: jdbc:postgresql://127.0.0.1/backend_class
+    username: postgres
+    password: Welcome1!
+  jpa:
+    database: POSTGRESQL
+    hibernate:
+      # ddl-auto: update | ketika aplikasi pertama kali dijalankan, database akan dibuat otomatis
+      # ddl-auto: validate | ketika aplikasi pertama kali dijalankan, database akan divalidasi (Cocok digunakan untuk production)
+      # ddl-auto: none | ketika aplikasi pertama kali dijalankan, database tidak akan dibuat otomatis
+      # ddl-auto: create | ketika aplikasi pertama kali dijalankan, database akan dibuat otomatis
+      # ddl-auto: create-drop | ketika aplikasi pertama kali dijalankan, database akan dibuat otomatis dan dihapus ketika aplikasi dimatikan
+      ddl-auto: update
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+    show-sql: true
