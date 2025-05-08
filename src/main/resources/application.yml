@@ -7,7 +7,7 @@ spring:
       idle-timeout: 600000
       max-lifetime: 1800000
       maximum-pool-size: 10
-    url: jdbc:postgresql://127.0.0.1/backend_class
+    url: jdbc:postgresql://127.0.0.1/m_tix
     username: postgres
     password: Welcome1!
   jpa:
