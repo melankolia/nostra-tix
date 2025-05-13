@@ -10,13 +10,16 @@ public class User {
     @GeneratedValue(strategy = GenerationType.IDENTITY) // Auto increment
     private Long id;
 
+    @Column(nullable = false)
     private String name;
 
     @Column(nullable = false)
     private String email;
 
+    @Column(nullable = false)
     private String phoneNo;
 
+    @Column(nullable = false)
     private String password;
 
 

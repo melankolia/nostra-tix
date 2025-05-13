@@ -9,11 +9,14 @@ public class StudioType {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Column(nullable = false)
     private String name;
 
-    private Integer row_size;
+    @Column(nullable = false)
+    private Integer rowSize;
 
-    private Integer column_size;
+    @Column(nullable = false)
+    private Integer columnSize;
 
     public Long getId() {
         return id;
@@ -31,19 +34,19 @@ public class StudioType {
         this.name = name;
     }
 
-    public Integer getRow_size() {
-        return row_size;
+    public Integer getRowSize() {
+        return rowSize;
     }
 
-    public void setRow_size(Integer row_size) {
-        this.row_size = row_size;
+    public void setRowSize(Integer rowSize) {
+        this.rowSize = rowSize;
     }
 
-    public Integer getColumn_size() {
-        return column_size;
+    public Integer getColumnSize() {
+        return columnSize;
     }
 
-    public void setColumn_size(Integer column_size) {
-        this.column_size = column_size;
+    public void setColumnSize(Integer columnSize) {
+        this.columnSize = columnSize;
     }
 }

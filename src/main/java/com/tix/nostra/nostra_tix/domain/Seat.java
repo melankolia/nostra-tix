@@ -12,15 +12,18 @@ public class Seat {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Column(nullable = false)
     private String seatNumber;
 
     private Boolean isAvailable;
 
     private Boolean isVisible;
 
-    private Integer row_index;
+    @Column(nullable = false)
+    private Integer rowIndex;
 
-    private Integer column_index;
+    @Column(nullable = false)
+    private Integer columIndex;
 
     @ManyToOne
     @JoinColumn(name = "seat_type_id")
@@ -65,22 +68,6 @@ public class Seat {
         isVisible = visible;
     }
 
-    public Integer getRow_index() {
-        return row_index;
-    }
-
-    public void setRow_index(Integer row_index) {
-        this.row_index = row_index;
-    }
-
-    public Integer getColumn_index() {
-        return column_index;
-    }
-
-    public void setColumn_index(Integer column_index) {
-        this.column_index = column_index;
-    }
-
     public SeatType getSeatType() {
         return seatType;
     }
@@ -95,5 +82,29 @@ public class Seat {
 
     public void setStudio(Studio studio) {
         this.studio = studio;
+    }
+
+    public Set<Booking> getBookedSeats() {
+        return bookedSeats;
+    }
+
+    public void setBookedSeats(Set<Booking> bookedSeats) {
+        this.bookedSeats = bookedSeats;
+    }
+
+    public Integer getRowIndex() {
+        return rowIndex;
+    }
+
+    public void setRowIndex(Integer rowIndex) {
+        this.rowIndex = rowIndex;
+    }
+
+    public Integer getColumIndex() {
+        return columIndex;
+    }
+
+    public void setColumIndex(Integer columIndex) {
+        this.columIndex = columIndex;
     }
 }

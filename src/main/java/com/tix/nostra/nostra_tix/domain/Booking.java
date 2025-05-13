@@ -2,7 +2,8 @@ package com.tix.nostra.nostra_tix.domain;
 
 import jakarta.persistence.*;
 
-import java.time.ZonedDateTime;
+import java.math.BigDecimal;
+import java.util.Date;
 import java.util.Set;
 
 @Entity
@@ -12,13 +13,17 @@ public class Booking {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private ZonedDateTime orderDate;
+    private Date orderDate;
 
-    private ZonedDateTime paidDate;
+    private Date paidDate;
 
     private Boolean isPaid;
 
-    private Integer totalPrice;
+    @Column(nullable = false)
+    private BigDecimal totalPrice;
+
+    @Column(nullable = false)
+    private String status;
 
     @ManyToOne
     @JoinColumn(name = "schedule_id")
@@ -36,6 +41,16 @@ public class Booking {
     )
     private Set<Seat> seats;
 
+    public void addSeat(Seat seat) {
+        this.seats.add(seat);
+        seat.getBookedSeats().add(this);
+    }
+
+    public void removeSeat(Seat seat) {
+        this.seats.remove(seat);
+        seat.getBookedSeats().remove(this);
+    }
+
     public Long getId() {
         return id;
     }
@@ -52,11 +67,11 @@ public class Booking {
         isPaid = paid;
     }
 
-    public Integer getTotalPrice() {
+    public BigDecimal getTotalPrice() {
         return totalPrice;
     }
 
-    public void setTotalPrice(Integer totalPrice) {
+    public void setTotalPrice(BigDecimal totalPrice) {
         this.totalPrice = totalPrice;
     }
 
@@ -74,5 +89,37 @@ public class Booking {
 
     public void setUser(User user) {
         this.user = user;
+    }
+
+    public Date getOrderDate() {
+        return orderDate;
+    }
+
+    public void setOrderDate(Date orderDate) {
+        this.orderDate = orderDate;
+    }
+
+    public Date getPaidDate() {
+        return paidDate;
+    }
+
+    public void setPaidDate(Date paidDate) {
+        this.paidDate = paidDate;
+    }
+
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
+    }
+
+    public Set<Seat> getSeats() {
+        return seats;
+    }
+
+    public void setSeats(Set<Seat> seats) {
+        this.seats = seats;
     }
 }

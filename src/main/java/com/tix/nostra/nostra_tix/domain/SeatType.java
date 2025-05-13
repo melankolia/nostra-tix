@@ -2,6 +2,8 @@ package com.tix.nostra.nostra_tix.domain;
 
 import jakarta.persistence.*;
 
+import java.math.BigDecimal;
+
 @Entity
 @Table
 public class SeatType {
@@ -10,9 +12,10 @@ public class SeatType {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Column(nullable = false)
     private String name;
 
-    private Integer additionalPrice;
+    private BigDecimal additionalPrice;
 
     public Long getId() {
         return id;
@@ -30,11 +33,11 @@ public class SeatType {
         this.name = name;
     }
 
-    public Integer getAdditionalPrice() {
+    public BigDecimal getAdditionalPrice() {
         return additionalPrice;
     }
 
-    public void setAdditionalPrice(Integer additionalPrice) {
+    public void setAdditionalPrice(BigDecimal additionalPrice) {
         this.additionalPrice = additionalPrice;
     }
 }

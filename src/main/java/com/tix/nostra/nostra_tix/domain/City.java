@@ -9,6 +9,7 @@ public class City {
     @GeneratedValue(strategy = GenerationType.IDENTITY) // Auto increment
     private Long id;
 
+    @Column(nullable = false)
     private String name;
 
     public Long getId() {

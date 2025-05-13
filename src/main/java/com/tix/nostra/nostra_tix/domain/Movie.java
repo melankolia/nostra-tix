@@ -1,8 +1,7 @@
 package com.tix.nostra.nostra_tix.domain;
 
 import jakarta.persistence.*;
-
-import java.time.ZonedDateTime;
+import java.util.Date;
 
 @Entity
 @Table
@@ -11,11 +10,12 @@ public class Movie {
     @GeneratedValue(strategy = GenerationType.IDENTITY) // Auto increment
     private Long id;
 
+    @Column(nullable = false)
     private String name;
 
-    private ZonedDateTime showingStartDate;
+    private Date showingStartDate;
 
-    private ZonedDateTime showingEndDate;
+    private Date showingEndDate;
 
     public Long getId() {
         return id;
@@ -33,19 +33,19 @@ public class Movie {
         this.name = name;
     }
 
-    public ZonedDateTime getShowingStartDate() {
+    public Date getShowingStartDate() {
         return showingStartDate;
     }
 
-    public void setShowingStartDate(ZonedDateTime showingStartDate) {
+    public void setShowingStartDate(Date showingStartDate) {
         this.showingStartDate = showingStartDate;
     }
 
-    public ZonedDateTime getShowingEndDate() {
+    public Date getShowingEndDate() {
         return showingEndDate;
     }
 
-    public void setShowingEndDate(ZonedDateTime showingEndDate) {
+    public void setShowingEndDate(Date showingEndDate) {
         this.showingEndDate = showingEndDate;
     }
 }

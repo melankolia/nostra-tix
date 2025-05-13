@@ -2,7 +2,9 @@ package com.tix.nostra.nostra_tix.domain;
 
 import jakarta.persistence.*;
 
+import java.math.BigDecimal;
 import java.time.ZonedDateTime;
+import java.util.Date;
 
 @Entity
 @Table
@@ -12,10 +14,11 @@ public class Schedule {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private ZonedDateTime showTime;
-    private ZonedDateTime endShowTime;
+    private Date showTime;
+    private Date endShowTime;
 
-    private Integer price;
+    @Column(nullable = false)
+    private BigDecimal price;
 
     @ManyToOne
     @JoinColumn(name = "movie_id")
@@ -33,27 +36,27 @@ public class Schedule {
         this.id = id;
     }
 
-    public ZonedDateTime getShowTime() {
+    public Date getShowTime() {
         return showTime;
     }
 
-    public void setShowTime(ZonedDateTime showTime) {
+    public void setShowTime(Date showTime) {
         this.showTime = showTime;
     }
 
-    public ZonedDateTime getEndShowTime() {
+    public Date getEndShowTime() {
         return endShowTime;
     }
 
-    public void setEndShowTime(ZonedDateTime endShowTime) {
+    public void setEndShowTime(Date endShowTime) {
         this.endShowTime = endShowTime;
     }
 
-    public Integer getPrice() {
+    public BigDecimal getPrice() {
         return price;
     }
 
-    public void setPrice(Integer price) {
+    public void setPrice(BigDecimal price) {
         this.price = price;
     }
 
