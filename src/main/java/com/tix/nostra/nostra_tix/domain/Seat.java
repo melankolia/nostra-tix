@@ -2,6 +2,8 @@ package com.tix.nostra.nostra_tix.domain;
 
 import jakarta.persistence.*;
 
+import java.util.Set;
+
 @Entity
 @Table
 public class Seat {
@@ -27,6 +29,9 @@ public class Seat {
     @ManyToOne
     @JoinColumn(name = "studio_id")
     private Studio studio;
+
+    @ManyToMany(mappedBy = "seats")
+    private Set<Booking> bookedSeats;
 
     public Long getId() {
         return id;
