@@ -3,7 +3,6 @@ package com.tix.nostra.nostra_tix.domain;
 import jakarta.persistence.*;
 
 import java.math.BigDecimal;
-import java.time.ZonedDateTime;
 import java.util.Date;
 
 @Entity
