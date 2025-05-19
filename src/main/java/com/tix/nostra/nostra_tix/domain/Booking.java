@@ -1,5 +1,6 @@
 package com.tix.nostra.nostra_tix.domain;
 
+import com.tix.nostra.nostra_tix.util.BookingStatusEnum;
 import jakarta.persistence.*;
 
 import java.math.BigDecimal;
@@ -22,8 +23,9 @@ public class Booking {
     @Column(nullable = false)
     private BigDecimal totalPrice;
 
+    @Enumerated(EnumType.STRING)
     @Column(nullable = false)
-    private String status;
+    private BookingStatusEnum bookingStatusEnum;
 
     @ManyToOne
     @JoinColumn(name = "schedule_id")
@@ -107,12 +109,12 @@ public class Booking {
         this.paidDate = paidDate;
     }
 
-    public String getStatus() {
-        return status;
+    public BookingStatusEnum getStatus() {
+        return bookingStatusEnum;
     }
 
-    public void setStatus(String status) {
-        this.status = status;
+    public void setStatus(BookingStatusEnum bookingStatusEnum) {
+        this.bookingStatusEnum = bookingStatusEnum;
     }
 
     public Set<Seat> getSeats() {
