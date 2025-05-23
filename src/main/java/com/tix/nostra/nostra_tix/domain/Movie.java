@@ -19,11 +19,12 @@ public class Movie {
     @Column(nullable = false)
     private Integer duration;
 
-    @Lob
-    @Column(nullable = false, columnDefinition = "TEXT")
+    @Column(columnDefinition = "text")
     private String synopsis;
 
     private Date showingStartDate;
+
+    private Date showingEndDate;
 
     public Long getId() {
         return id;
@@ -39,14 +40,6 @@ public class Movie {
 
     public void setName(String name) {
         this.name = name;
-    }
-
-    public Date getShowingStartDate() {
-        return showingStartDate;
-    }
-
-    public void setShowingStartDate(Date showingStartDate) {
-        this.showingStartDate = showingStartDate;
     }
 
     public String getTrailerURI() {
@@ -71,5 +64,21 @@ public class Movie {
 
     public void setSynopsis(String synopsis) {
         this.synopsis = synopsis;
+    }
+
+    public Date getShowingStartDate() {
+        return showingStartDate;
+    }
+
+    public void setShowingStartDate(Date showingStartDate) {
+        this.showingStartDate = showingStartDate;
+    }
+
+    public Date getShowingEndDate() {
+        return showingEndDate;
+    }
+
+    public void setShowingEndDate(Date showingEndDate) {
+        this.showingEndDate = showingEndDate;
     }
 }
