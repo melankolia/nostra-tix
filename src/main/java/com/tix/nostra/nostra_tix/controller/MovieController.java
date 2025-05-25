@@ -20,8 +20,9 @@ public class MovieController {
     private MovieService movieService;
 
     @GetMapping
-    public List<Movie> findAll() {
-        return movieService.findAll();
+    public ResponseEntity<List<Movie>> findAll() {
+        List<Movie> movies = movieService.findAll();
+        return ResponseEntity.ok(movies);
     }
 
     @GetMapping("/{id}")
