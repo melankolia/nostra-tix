@@ -3,7 +3,9 @@ package com.tix.nostra.nostra_tix.controller;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -22,8 +24,16 @@ public class MovieController {
         return movieService.findAll();
     }
 
+    @GetMapping("/{id}")
+    public ResponseEntity<Movie> findById(@PathVariable Long id) {
+
+        Movie movie = movieService.findById(id);
+        return ResponseEntity.ok(movie);
+    }
+
     @GetMapping("/upcoming")
     public List<Movie> findAllUpcoming() {
         return movieService.findAllUpcoming();
     }
+
 }
