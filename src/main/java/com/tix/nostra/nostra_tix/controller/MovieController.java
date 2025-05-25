@@ -32,8 +32,10 @@ public class MovieController {
     }
 
     @GetMapping("/upcoming")
-    public List<Movie> findAllUpcoming() {
-        return movieService.findAllUpcoming();
+    public ResponseEntity<List<Movie>> findAllUpcoming() {
+
+        List<Movie> movies = movieService.findAllUpcoming();
+        return ResponseEntity.ok(movies);
     }
 
 }
