@@ -24,4 +24,9 @@ public class MovieServiceImpl implements MovieService {
     public List<Movie> findAllUpcoming() {
         return movieRepository.findAllUpcoming();
     }
+
+    @Override
+    public Movie findById(Long id) {
+        return movieRepository.findById(id).orElse(null);
+    }
 }

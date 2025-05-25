@@ -8,5 +8,7 @@ public interface MovieService {
 
     List<Movie> findAll();
 
+    Movie findById(Long number);
+
     List<Movie> findAllUpcoming();
 }
