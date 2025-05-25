@@ -27,7 +27,9 @@ public class CityController {
     }
 
     @GetMapping("/count/theater")
-    public List<TheaterCountCity> findAllTheaterCount() {
-        return cityService.findAllTheaterCount();
+    public ResponseEntity<List<TheaterCountCity>> findAllTheaterCount() {
+        List<TheaterCountCity> theaterCountCities = cityService.findAllTheaterCount();
+
+        return ResponseEntity.ok(theaterCountCities);
     }
 }
