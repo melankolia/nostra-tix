@@ -5,6 +5,8 @@ import org.springframework.stereotype.Service;
 
 import com.tix.nostra.nostra_tix.domain.User;
 import com.tix.nostra.nostra_tix.dto.UserLoginDTO;
+import com.tix.nostra.nostra_tix.dto.UserRegisterRequestDTO;
+import com.tix.nostra.nostra_tix.dto.UserRegisterResponseDTO;
 import com.tix.nostra.nostra_tix.repository.UserRepository;
 import com.tix.nostra.nostra_tix.service.UserService;
 
@@ -27,5 +29,21 @@ public class UserServiceImpl implements UserService {
         } catch (Exception e) {
             throw new RuntimeException("Error during login process", e);
         }
+    }
+
+    @Override
+    public UserRegisterResponseDTO register(UserRegisterRequestDTO user) {
+
+        User userToRegister = new User();
+        userToRegister.setName(user.name());
+        userToRegister.setEmail(user.email());
+        userToRegister.setPhoneNo(user.phoneNo());
+        userToRegister.setPassword(user.password());
+
+        User userRegistered = userRepository.save(userToRegister);
+        return new UserRegisterResponseDTO(
+                userRegistered.getName(),
+                userRegistered.getEmail(),
+                userRegistered.getPhoneNo());
     }
 }

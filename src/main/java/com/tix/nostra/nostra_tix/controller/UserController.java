@@ -1,5 +1,6 @@
 package com.tix.nostra.nostra_tix.controller;
 
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -29,4 +30,5 @@ public class UserController {
             return ResponseEntity.badRequest().body(new UserLoginResponseDTO("error", e.getMessage()));
         }
     }
+
 }
