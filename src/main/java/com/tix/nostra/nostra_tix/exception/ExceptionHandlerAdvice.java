@@ -31,6 +31,15 @@ public class ExceptionHandlerAdvice extends ResponseEntityExceptionHandler {
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(dto);
     }
 
+    @ExceptionHandler(DuplicateUserDataException.class)
+    public ResponseEntity<ErrorMessageDTO> handleDuplicateUserDataException(DuplicateUserDataException ex,
+            WebRequest request) {
+        List<String> details = new ArrayList<>();
+        details.add(ex.getMessage());
+        ErrorMessageDTO dto = new ErrorMessageDTO(102, details);
+        return ResponseEntity.status(HttpStatus.CONFLICT).body(dto);
+    }
+
     @Override
     protected ResponseEntity<Object> handleMethodArgumentNotValid(MethodArgumentNotValidException ex,
             HttpHeaders headers, HttpStatusCode status, WebRequest request) {

@@ -8,6 +8,7 @@ import com.tix.nostra.nostra_tix.dto.UserDetailResponseDTO;
 import com.tix.nostra.nostra_tix.dto.UserLoginDTO;
 import com.tix.nostra.nostra_tix.dto.UserRegisterRequestDTO;
 import com.tix.nostra.nostra_tix.dto.UserRegisterResponseDTO;
+import com.tix.nostra.nostra_tix.exception.DuplicateUserDataException;
 import com.tix.nostra.nostra_tix.exception.ResourceNotFoundException;
 import com.tix.nostra.nostra_tix.repository.UserRepository;
 import com.tix.nostra.nostra_tix.service.UserService;
@@ -35,6 +36,15 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public UserRegisterResponseDTO register(UserRegisterRequestDTO user) {
+        User existingUser = userRepository.findByEmailOrPhoneNo(user.email(), user.phoneNo());
+        if (existingUser != null) {
+            if (existingUser.getEmail().equals(user.email())) {
+                throw new DuplicateUserDataException("Email already registered: " + user.email());
+            }
+            if (existingUser.getPhoneNo().equals(user.phoneNo())) {
+                throw new DuplicateUserDataException("Phone number already registered: " + user.phoneNo());
+            }
+        }
 
         User userToRegister = new User();
         userToRegister.setName(user.name());
