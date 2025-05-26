@@ -4,9 +4,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.tix.nostra.nostra_tix.domain.User;
+import com.tix.nostra.nostra_tix.dto.UserDetailResponseDTO;
 import com.tix.nostra.nostra_tix.dto.UserLoginDTO;
 import com.tix.nostra.nostra_tix.dto.UserRegisterRequestDTO;
 import com.tix.nostra.nostra_tix.dto.UserRegisterResponseDTO;
+import com.tix.nostra.nostra_tix.exception.ResourceNotFoundException;
 import com.tix.nostra.nostra_tix.repository.UserRepository;
 import com.tix.nostra.nostra_tix.service.UserService;
 
@@ -45,5 +47,14 @@ public class UserServiceImpl implements UserService {
                 userRegistered.getName(),
                 userRegistered.getEmail(),
                 userRegistered.getPhoneNo());
+    }
+
+    @Override
+    public UserDetailResponseDTO getUserDetail(String email) {
+        User user = userRepository.findByEmail(email);
+        if (user == null) {
+            throw new ResourceNotFoundException("User not found with email: " + email);
+        }
+        return new UserDetailResponseDTO(user.getName(), user.getEmail(), user.getPhoneNo());
     }
 }
