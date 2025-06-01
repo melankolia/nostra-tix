@@ -2,7 +2,6 @@ package com.tix.nostra.nostra_tix.controller;
 
 import java.util.List;
 
-import org.apache.catalina.connector.Response;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -15,6 +14,7 @@ import com.tix.nostra.nostra_tix.service.CityService;
 
 @RestController
 @RequestMapping("/cities")
+// /v1/city/{code}/cinema
 public class CityController {
 
     @Autowired
@@ -26,7 +26,7 @@ public class CityController {
         return ResponseEntity.ok(cities);
     }
 
-    @GetMapping("/count/theater")
+    @GetMapping("/total-theater")
     public ResponseEntity<List<TheaterCountCity>> findAllTheaterCount() {
         List<TheaterCountCity> theaterCountCities = cityService.findAllTheaterCount();
 
