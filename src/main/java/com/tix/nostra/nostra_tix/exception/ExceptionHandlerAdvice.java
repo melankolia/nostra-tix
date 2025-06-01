@@ -9,6 +9,7 @@ import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.ObjectError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
+import org.springframework.web.bind.MissingServletRequestParameterException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.context.request.WebRequest;
@@ -38,6 +39,15 @@ public class ExceptionHandlerAdvice extends ResponseEntityExceptionHandler {
         details.add(ex.getMessage());
         ErrorMessageDTO dto = new ErrorMessageDTO(102, details);
         return ResponseEntity.status(HttpStatus.CONFLICT).body(dto);
+    }
+
+    @Override
+    protected ResponseEntity<Object> handleMissingServletRequestParameter(MissingServletRequestParameterException ex,
+            HttpHeaders headers, HttpStatusCode status, WebRequest request) {
+        List<String> details = new ArrayList<>();
+        details.add(ex.getParameterName() + " parameter is required");
+        ErrorMessageDTO dto = new ErrorMessageDTO(403, details);
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(dto);
     }
 
     @Override
