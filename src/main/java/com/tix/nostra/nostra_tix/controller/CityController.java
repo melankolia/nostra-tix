@@ -13,7 +13,7 @@ import com.tix.nostra.nostra_tix.dto.TheaterCountCity;
 import com.tix.nostra.nostra_tix.service.CityService;
 
 @RestController
-@RequestMapping("/city")
+@RequestMapping("/cities")
 // /v1/city/{code}/cinema
 public class CityController {
 
