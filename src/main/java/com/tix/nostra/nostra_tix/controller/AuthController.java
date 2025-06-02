@@ -16,7 +16,7 @@ import com.tix.nostra.nostra_tix.service.UserService;
 import jakarta.validation.Valid;
 
 @RestController
-@RequestMapping("/auth")
+@RequestMapping("/api/auth")
 public class AuthController {
 
     @Autowired
