@@ -2,6 +2,7 @@ package com.tix.nostra.nostra_tix.service.Impl;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 import java.util.Set;
@@ -18,8 +19,10 @@ import com.tix.nostra.nostra_tix.dto.BookingDTO;
 import com.tix.nostra.nostra_tix.dto.BookingSeatDTO;
 import com.tix.nostra.nostra_tix.dto.BookingSeatResponseDTO;
 import com.tix.nostra.nostra_tix.dto.MovieScheduleDTO;
+import com.tix.nostra.nostra_tix.dto.UserTicketResponseDTO;
 import com.tix.nostra.nostra_tix.exception.DuplicateUserDataException;
 import com.tix.nostra.nostra_tix.exception.ResourceNotFoundException;
+import com.tix.nostra.nostra_tix.projection.UserTicketProjection;
 import com.tix.nostra.nostra_tix.repository.BookingRepository;
 import com.tix.nostra.nostra_tix.repository.ScheduleRepository;
 import com.tix.nostra.nostra_tix.repository.SeatRepository;
@@ -86,6 +89,25 @@ public class BookingServiceImpl implements BookingService {
         BookingSeatResponseDTO bookingSeatResponseDTO = new BookingSeatResponseDTO(movieScheduleDTO, bookingSeats);
 
         return bookingSeatResponseDTO;
+    }
+
+    @Override
+    public List<UserTicketResponseDTO> findByUserId(Long userId) {
+        List<UserTicketProjection> tickets = bookingRepository.findTicketsByUserId(userId);
+
+        if (tickets.isEmpty()) {
+            throw new ResourceNotFoundException("Ticket's not found");
+        }
+
+        return tickets.stream()
+                .map(ticket -> new UserTicketResponseDTO(
+                        ticket.getId(),
+                        ticket.getMovieName(),
+                        ticket.getMovieImageURI(),
+                        ticket.getTheaterName(),
+                        ticket.getStudioName(),
+                        Arrays.asList(ticket.getSeatNumbers().split(", "))))
+                .collect(Collectors.toList());
     }
 
     @Override
