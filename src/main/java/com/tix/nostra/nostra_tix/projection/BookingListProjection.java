@@ -1,15 +1,15 @@
 package com.tix.nostra.nostra_tix.projection;
 
 public interface BookingListProjection {
-        Long getId();
+    Long getId();
 
-        String getCityName();
+    String getCityName();
 
-        String getTheaterName();
+    String getTheaterName();
 
-        String getStudioName();
+    String getStudioName();
 
-        String getMovieName();
+    String getMovieName();
 
-        String getBookingStatus();
+    String getBookingStatus();
 }
