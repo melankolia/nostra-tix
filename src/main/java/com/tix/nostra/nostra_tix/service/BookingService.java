@@ -8,4 +8,6 @@ public interface BookingService {
     BookingSeatResponseDTO findAll(Long scheduleId, Long studioId);
 
     Boolean createBooking(Long scheduleId, BookingDTO bookingDTO);
+
+    Boolean payBooking(Long bookingId);
 }
