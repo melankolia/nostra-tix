@@ -18,6 +18,8 @@ public class Booking {
 
     private Date paidDate;
 
+    private Date expiredDate;
+
     private Boolean isPaid;
 
     @Column(nullable = false)
@@ -109,5 +111,13 @@ public class Booking {
 
     public void setSeats(Set<Seat> seats) {
         this.seats = seats;
+    }
+
+    public Date getExpiredDate() {
+        return expiredDate;
+    }
+
+    public void setExpiredDate(Date expiredDate) {
+        this.expiredDate = expiredDate;
     }
 }

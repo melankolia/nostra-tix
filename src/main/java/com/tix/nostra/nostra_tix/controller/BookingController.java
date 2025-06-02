@@ -4,13 +4,17 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.tix.nostra.nostra_tix.dto.BookingDTO;
 import com.tix.nostra.nostra_tix.dto.BookingSeatResponseDTO;
 import com.tix.nostra.nostra_tix.service.BookingService;
 
+import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
 
 @RestController
@@ -20,9 +24,17 @@ public class BookingController {
     @Autowired
     private BookingService bookingService;
 
+    @PostMapping("/{scheduleId}")
+    public ResponseEntity<Boolean> createBooking(
+            @PathVariable @NotNull(message = "Schedule ID is required") Long scheduleId,
+            @RequestBody @Valid BookingDTO bookingDTO) {
+        return ResponseEntity.ok(bookingService.createBooking(scheduleId, bookingDTO));
+    }
+
     @GetMapping("/{scheduleId}")
     public ResponseEntity<BookingSeatResponseDTO> findAll(@PathVariable Long scheduleId,
             @RequestParam @NotNull Long studioId) {
         return ResponseEntity.ok(bookingService.findAll(scheduleId, studioId));
     }
+
 }
