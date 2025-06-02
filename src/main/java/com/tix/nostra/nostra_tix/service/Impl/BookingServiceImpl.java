@@ -22,6 +22,7 @@ import com.tix.nostra.nostra_tix.dto.MovieScheduleDTO;
 import com.tix.nostra.nostra_tix.dto.UserTicketResponseDTO;
 import com.tix.nostra.nostra_tix.exception.DuplicateUserDataException;
 import com.tix.nostra.nostra_tix.exception.ResourceNotFoundException;
+import com.tix.nostra.nostra_tix.projection.BookingListProjection;
 import com.tix.nostra.nostra_tix.projection.UserTicketProjection;
 import com.tix.nostra.nostra_tix.repository.BookingRepository;
 import com.tix.nostra.nostra_tix.repository.ScheduleRepository;
@@ -89,6 +90,11 @@ public class BookingServiceImpl implements BookingService {
         BookingSeatResponseDTO bookingSeatResponseDTO = new BookingSeatResponseDTO(movieScheduleDTO, bookingSeats);
 
         return bookingSeatResponseDTO;
+    }
+
+    @Override
+    public List<BookingListProjection> findAllBookingList() {
+        return bookingRepository.findAllProjectedBy();
     }
 
     @Override
@@ -213,6 +219,33 @@ public class BookingServiceImpl implements BookingService {
         booking.setExpiredDate(new Date(System.currentTimeMillis() + 1000 * 60 * 10));
         bookingRepository.save(booking);
 
+        return true;
+    }
+
+    @Override
+    @Transactional
+    public Boolean completeBooking(Long bookingId) {
+        Booking booking = bookingRepository.findById(bookingId)
+                .orElseThrow(() -> new ResourceNotFoundException("Booking not found"));
+
+        if (booking.getExpiredDate().before(new Date())) {
+            throw new ResourceNotFoundException("Booking expired");
+        }
+
+        if (booking.getStatus().equals(BookingStatusEnum.PAID)) {
+            throw new ResourceNotFoundException("Booking already paid");
+        }
+
+        if (booking.getStatus().equals(BookingStatusEnum.CANCELLED)) {
+            throw new ResourceNotFoundException("Booking cancelled");
+        }
+
+        if (booking.getStatus().equals(BookingStatusEnum.COMPLETED)) {
+            throw new ResourceNotFoundException("Booking already completed");
+        }
+
+        booking.setStatus(BookingStatusEnum.COMPLETED);
+        bookingRepository.save(booking);
         return true;
     }
 }
