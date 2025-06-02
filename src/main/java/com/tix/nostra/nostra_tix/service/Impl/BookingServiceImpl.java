@@ -89,6 +89,28 @@ public class BookingServiceImpl implements BookingService {
     }
 
     @Override
+    public Boolean payBooking(Long bookingId) {
+        Booking booking = bookingRepository.findById(bookingId)
+                .orElseThrow(() -> new ResourceNotFoundException("Booking not found"));
+
+        if (booking.getExpiredDate().before(new Date())) {
+            throw new ResourceNotFoundException("Booking expired");
+        }
+
+        if (booking.getStatus().equals(BookingStatusEnum.PAID)) {
+            throw new ResourceNotFoundException("Booking already paid");
+        }
+
+        if (booking.getStatus().equals(BookingStatusEnum.CANCELLED)) {
+            throw new ResourceNotFoundException("Booking cancelled");
+        }
+
+        booking.setStatus(BookingStatusEnum.PAID);
+        bookingRepository.save(booking);
+        return true;
+    }
+
+    @Override
     @Transactional
     public Boolean createBooking(Long scheduleId, BookingDTO bookingDTO) {
         List<Booking> existingBookings = bookingRepository.findByUserId(bookingDTO.userId());
