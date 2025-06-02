@@ -13,7 +13,7 @@ import com.tix.nostra.nostra_tix.domain.Movie;
 import com.tix.nostra.nostra_tix.service.MovieService;
 
 @RestController
-@RequestMapping("/movies")
+@RequestMapping("/api/movies")
 public class MovieController {
 
     @Autowired

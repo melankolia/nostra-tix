@@ -12,7 +12,7 @@ import com.tix.nostra.nostra_tix.dto.StudioTypeLovDTO;
 import com.tix.nostra.nostra_tix.service.StudioTypeService;
 
 @RestController
-@RequestMapping("/studio-types")
+@RequestMapping("/api/studio-types")
 public class StudioTypeController {
 
     @Autowired
