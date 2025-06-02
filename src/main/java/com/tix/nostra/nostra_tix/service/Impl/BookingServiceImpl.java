@@ -179,7 +179,7 @@ public class BookingServiceImpl implements BookingService {
 
     @Override
     @Transactional
-    public Boolean createBooking(Long scheduleId, BookingDTO bookingDTO) {
+    public Long createBooking(Long scheduleId, BookingDTO bookingDTO) {
         List<Booking> existingBookings = bookingRepository.findByUserId(bookingDTO.userId());
         if (!existingBookings.isEmpty()) {
             Booking existingBooking = existingBookings.get(0);
@@ -217,9 +217,10 @@ public class BookingServiceImpl implements BookingService {
         booking.setTotalPrice(totalPrice);
         booking.setPaid(false);
         booking.setExpiredDate(new Date(System.currentTimeMillis() + 1000 * 60 * 10));
-        bookingRepository.save(booking);
 
-        return true;
+        booking = bookingRepository.save(booking);
+        Long bookingId = booking.getId();
+        return bookingId;
     }
 
     @Override
