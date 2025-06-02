@@ -22,6 +22,7 @@ import com.tix.nostra.nostra_tix.dto.MovieScheduleDTO;
 import com.tix.nostra.nostra_tix.dto.UserTicketResponseDTO;
 import com.tix.nostra.nostra_tix.exception.DuplicateUserDataException;
 import com.tix.nostra.nostra_tix.exception.ResourceNotFoundException;
+import com.tix.nostra.nostra_tix.projection.BookingListProjection;
 import com.tix.nostra.nostra_tix.projection.UserTicketProjection;
 import com.tix.nostra.nostra_tix.repository.BookingRepository;
 import com.tix.nostra.nostra_tix.repository.ScheduleRepository;
@@ -89,6 +90,11 @@ public class BookingServiceImpl implements BookingService {
         BookingSeatResponseDTO bookingSeatResponseDTO = new BookingSeatResponseDTO(movieScheduleDTO, bookingSeats);
 
         return bookingSeatResponseDTO;
+    }
+
+    @Override
+    public List<BookingListProjection> findAllBookingList() {
+        return bookingRepository.findAllProjectedBy();
     }
 
     @Override
