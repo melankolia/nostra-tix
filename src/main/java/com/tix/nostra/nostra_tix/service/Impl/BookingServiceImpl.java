@@ -111,6 +111,23 @@ public class BookingServiceImpl implements BookingService {
     }
 
     @Override
+    public UserTicketResponseDTO findByBookingId(Long bookingId) {
+        List<UserTicketProjection> tickets = bookingRepository.findTicketsByBookingId(bookingId);
+
+        if (tickets.isEmpty()) {
+            throw new ResourceNotFoundException("Ticket's not found");
+        }
+
+        return new UserTicketResponseDTO(
+                tickets.get(0).getId(),
+                tickets.get(0).getMovieName(),
+                tickets.get(0).getMovieImageURI(),
+                tickets.get(0).getTheaterName(),
+                tickets.get(0).getStudioName(),
+                Arrays.asList(tickets.get(0).getSeatNumbers().split(", ")));
+    }
+
+    @Override
     public Boolean payBooking(Long bookingId) {
         Booking booking = bookingRepository.findById(bookingId)
                 .orElseThrow(() -> new ResourceNotFoundException("Booking not found"));

@@ -23,4 +23,9 @@ public class UserTicketController {
     public ResponseEntity<List<UserTicketResponseDTO>> getUserTickets(@PathVariable Long userId) {
         return ResponseEntity.ok(bookingService.findByUserId(userId));
     }
+
+    @GetMapping("/{bookingId}/detail")
+    public ResponseEntity<UserTicketResponseDTO> getUserTicket(@PathVariable Long bookingId) {
+        return ResponseEntity.ok(bookingService.findByBookingId(bookingId));
+    }
 }
