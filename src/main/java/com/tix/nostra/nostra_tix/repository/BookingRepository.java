@@ -30,4 +30,19 @@ public interface BookingRepository extends JpaRepository<Booking, Long> {
                         """)
         List<UserTicketProjection> findTicketsByUserId(@Param("userId") Long userId);
 
+        @Query("""
+                        SELECT b.id as id,
+                               b.schedule.movie.name as movieName,
+                               b.schedule.movie.imageURI as movieImageURI,
+                               b.schedule.studio.theater.name as theaterName,
+                               b.schedule.studio.name as studioName,
+                               function('string_agg', s.seatNumber, ', ') as seatNumbers
+                        FROM Booking b
+                        LEFT JOIN b.seats s
+                        WHERE b.id = :bookingId
+                        GROUP BY b.id, b.schedule.movie.name, b.schedule.movie.imageURI,
+                                 b.schedule.studio.theater.name, b.schedule.studio.name
+                        """)
+        List<UserTicketProjection> findTicketsByBookingId(@Param("bookingId") Long bookingId);
+
 }

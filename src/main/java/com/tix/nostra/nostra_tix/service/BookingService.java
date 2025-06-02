@@ -12,6 +12,8 @@ public interface BookingService {
 
     List<UserTicketResponseDTO> findByUserId(Long userId);
 
+    UserTicketResponseDTO findByBookingId(Long bookingId);
+
     Boolean createBooking(Long scheduleId, BookingDTO bookingDTO);
 
     Boolean payBooking(Long bookingId);
