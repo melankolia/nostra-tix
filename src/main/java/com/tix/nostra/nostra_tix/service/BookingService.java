@@ -5,10 +5,13 @@ import java.util.List;
 import com.tix.nostra.nostra_tix.dto.BookingDTO;
 import com.tix.nostra.nostra_tix.dto.BookingSeatResponseDTO;
 import com.tix.nostra.nostra_tix.dto.UserTicketResponseDTO;
+import com.tix.nostra.nostra_tix.projection.BookingListProjection;
 
 public interface BookingService {
 
     BookingSeatResponseDTO findAll(Long scheduleId, Long studioId);
+
+    List<BookingListProjection> findAllBookingList();
 
     List<UserTicketResponseDTO> findByUserId(Long userId);
 
@@ -19,4 +22,6 @@ public interface BookingService {
     Boolean payBooking(Long bookingId);
 
     Boolean cancelBooking(Long bookingId);
+
+    Boolean completeBooking(Long bookingId);
 }
