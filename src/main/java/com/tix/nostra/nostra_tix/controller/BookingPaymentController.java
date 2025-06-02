@@ -20,4 +20,9 @@ public class BookingPaymentController {
     public ResponseEntity<Boolean> payBooking(@PathVariable Long bookingId) {
         return ResponseEntity.ok(bookingService.payBooking(bookingId));
     }
+
+    @PostMapping("/{bookingId}/cancel")
+    public ResponseEntity<Boolean> cancelBooking(@PathVariable Long bookingId) {
+        return ResponseEntity.ok(bookingService.cancelBooking(bookingId));
+    }
 }
