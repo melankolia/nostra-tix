@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.tix.nostra.nostra_tix.dto.BookingDTO;
+import com.tix.nostra.nostra_tix.dto.BookingScheduleResponseDTO;
 import com.tix.nostra.nostra_tix.dto.BookingSeatResponseDTO;
 import com.tix.nostra.nostra_tix.service.BookingService;
 
@@ -25,10 +26,14 @@ public class BookingController {
     private BookingService bookingService;
 
     @PostMapping("/{scheduleId}")
-    public ResponseEntity<Boolean> createBooking(
+    public ResponseEntity<BookingScheduleResponseDTO> createBooking(
             @PathVariable @NotNull(message = "Schedule ID is required") Long scheduleId,
             @RequestBody @Valid BookingDTO bookingDTO) {
-        return ResponseEntity.ok(bookingService.createBooking(scheduleId, bookingDTO));
+        Long bookingId = bookingService.createBooking(scheduleId, bookingDTO);
+
+        BookingScheduleResponseDTO bookingScheduleResponseDTO = new BookingScheduleResponseDTO(bookingId);
+
+        return ResponseEntity.ok(bookingScheduleResponseDTO);
     }
 
     @GetMapping("/{scheduleId}")
