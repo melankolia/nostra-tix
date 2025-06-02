@@ -2,8 +2,6 @@ package com.tix.nostra.nostra_tix.domain;
 
 import jakarta.persistence.*;
 
-import java.util.Set;
-
 @Entity
 @Table
 public class Seat {
@@ -23,7 +21,7 @@ public class Seat {
     private Integer rowIndex;
 
     @Column(nullable = false)
-    private Integer columIndex;
+    private Integer columnIndex;
 
     @ManyToOne
     @JoinColumn(name = "seat_type_id")
@@ -32,9 +30,6 @@ public class Seat {
     @ManyToOne
     @JoinColumn(name = "studio_id")
     private Studio studio;
-
-    @ManyToMany(mappedBy = "seats")
-    private Set<Booking> bookedSeats;
 
     public Long getId() {
         return id;
@@ -84,14 +79,6 @@ public class Seat {
         this.studio = studio;
     }
 
-    public Set<Booking> getBookedSeats() {
-        return bookedSeats;
-    }
-
-    public void setBookedSeats(Set<Booking> bookedSeats) {
-        this.bookedSeats = bookedSeats;
-    }
-
     public Integer getRowIndex() {
         return rowIndex;
     }
@@ -100,11 +87,11 @@ public class Seat {
         this.rowIndex = rowIndex;
     }
 
-    public Integer getColumIndex() {
-        return columIndex;
+    public Integer getColumnIndex() {
+        return columnIndex;
     }
 
-    public void setColumIndex(Integer columIndex) {
-        this.columIndex = columIndex;
+    public void setColumnIndex(Integer columnIndex) {
+        this.columnIndex = columnIndex;
     }
 }
