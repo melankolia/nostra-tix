@@ -221,4 +221,31 @@ public class BookingServiceImpl implements BookingService {
 
         return true;
     }
+
+    @Override
+    @Transactional
+    public Boolean completeBooking(Long bookingId) {
+        Booking booking = bookingRepository.findById(bookingId)
+                .orElseThrow(() -> new ResourceNotFoundException("Booking not found"));
+
+        if (booking.getExpiredDate().before(new Date())) {
+            throw new ResourceNotFoundException("Booking expired");
+        }
+
+        if (booking.getStatus().equals(BookingStatusEnum.PAID)) {
+            throw new ResourceNotFoundException("Booking already paid");
+        }
+
+        if (booking.getStatus().equals(BookingStatusEnum.CANCELLED)) {
+            throw new ResourceNotFoundException("Booking cancelled");
+        }
+
+        if (booking.getStatus().equals(BookingStatusEnum.COMPLETED)) {
+            throw new ResourceNotFoundException("Booking already completed");
+        }
+
+        booking.setStatus(BookingStatusEnum.COMPLETED);
+        bookingRepository.save(booking);
+        return true;
+    }
 }

@@ -22,4 +22,6 @@ public interface BookingService {
     Boolean payBooking(Long bookingId);
 
     Boolean cancelBooking(Long bookingId);
+
+    Boolean completeBooking(Long bookingId);
 }
