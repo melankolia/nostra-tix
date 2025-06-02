@@ -36,22 +36,8 @@ public class Booking {
     private User user;
 
     @ManyToMany
-    @JoinTable(
-            name = "booking_seat",
-            joinColumns = @JoinColumn(name = "booking_id"),
-            inverseJoinColumns = @JoinColumn(name = "seat_id")
-    )
+    @JoinTable(name = "booking_seat", joinColumns = @JoinColumn(name = "booking_id"), inverseJoinColumns = @JoinColumn(name = "seat_id"))
     private Set<Seat> seats;
-
-    public void addSeat(Seat seat) {
-        this.seats.add(seat);
-        seat.getBookedSeats().add(this);
-    }
-
-    public void removeSeat(Seat seat) {
-        this.seats.remove(seat);
-        seat.getBookedSeats().remove(this);
-    }
 
     public Long getId() {
         return id;

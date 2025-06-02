@@ -16,6 +16,8 @@ public class Movie {
     @Column(nullable = false)
     private String trailerURI;
 
+    private String imageURI;
+
     @Column(nullable = false)
     private Integer duration;
 
@@ -80,5 +82,13 @@ public class Movie {
 
     public void setShowingEndDate(Date showingEndDate) {
         this.showingEndDate = showingEndDate;
+    }
+
+    public String getImageURI() {
+        return imageURI;
+    }
+
+    public void setImageURI(String imageURI) {
+        this.imageURI = imageURI;
     }
 }
