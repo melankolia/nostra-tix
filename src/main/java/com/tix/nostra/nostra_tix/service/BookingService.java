@@ -10,4 +10,6 @@ public interface BookingService {
     Boolean createBooking(Long scheduleId, BookingDTO bookingDTO);
 
     Boolean payBooking(Long bookingId);
+
+    Boolean cancelBooking(Long bookingId);
 }
