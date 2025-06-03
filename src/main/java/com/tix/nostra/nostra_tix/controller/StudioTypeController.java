@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.tix.nostra.nostra_tix.dto.ResultResponseDTO;
 import com.tix.nostra.nostra_tix.dto.StudioTypeLovDTO;
 import com.tix.nostra.nostra_tix.service.StudioTypeService;
 
@@ -19,7 +20,11 @@ public class StudioTypeController {
     private StudioTypeService studioTypeService;
 
     @GetMapping
-    public ResponseEntity<List<StudioTypeLovDTO>> findAll() {
-        return ResponseEntity.ok(studioTypeService.findAll());
+    public ResponseEntity<ResultResponseDTO<List<StudioTypeLovDTO>>> findAll() {
+        List<StudioTypeLovDTO> studioTypes = studioTypeService.findAll();
+        ResultResponseDTO<List<StudioTypeLovDTO>> resultResponseDTO = new ResultResponseDTO<>(
+                "OK",
+                studioTypes);
+        return ResponseEntity.ok(resultResponseDTO);
     }
 }

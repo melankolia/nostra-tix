@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.tix.nostra.nostra_tix.dto.ResultResponseDTO;
 import com.tix.nostra.nostra_tix.dto.UserTicketResponseDTO;
 import com.tix.nostra.nostra_tix.service.BookingService;
 
@@ -20,12 +21,14 @@ public class UserTicketController {
     private BookingService bookingService;
 
     @GetMapping("/{userId}")
-    public ResponseEntity<List<UserTicketResponseDTO>> getUserTickets(@PathVariable Long userId) {
-        return ResponseEntity.ok(bookingService.findByUserId(userId));
+    public ResponseEntity<ResultResponseDTO<List<UserTicketResponseDTO>>> getUserTickets(@PathVariable Long userId) {
+        List<UserTicketResponseDTO> tickets = bookingService.findByUserId(userId);
+        return ResponseEntity.ok(new ResultResponseDTO<>("OK", tickets));
     }
 
     @GetMapping("/{bookingId}/detail")
-    public ResponseEntity<UserTicketResponseDTO> getUserTicket(@PathVariable Long bookingId) {
-        return ResponseEntity.ok(bookingService.findByBookingId(bookingId));
+    public ResponseEntity<ResultResponseDTO<UserTicketResponseDTO>> getUserTicket(@PathVariable Long bookingId) {
+        UserTicketResponseDTO ticket = bookingService.findByBookingId(bookingId);
+        return ResponseEntity.ok(new ResultResponseDTO<>("OK", ticket));
     }
 }

@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.tix.nostra.nostra_tix.domain.Movie;
 import com.tix.nostra.nostra_tix.service.MovieService;
+import com.tix.nostra.nostra_tix.dto.ResultResponseDTO;
 
 @RestController
 @RequestMapping("/api/movies")
@@ -20,23 +21,21 @@ public class MovieController {
     private MovieService movieService;
 
     @GetMapping
-    public ResponseEntity<List<Movie>> findAll() {
+    public ResponseEntity<ResultResponseDTO<List<Movie>>> findAll() {
         List<Movie> movies = movieService.findAll();
-        return ResponseEntity.ok(movies);
+        return ResponseEntity.ok(new ResultResponseDTO<>("OK", movies));
     }
 
     @GetMapping("/{id}/detail")
-    public ResponseEntity<Movie> findById(@PathVariable Long id) {
-
+    public ResponseEntity<ResultResponseDTO<Movie>> findById(@PathVariable Long id) {
         Movie movie = movieService.findById(id);
-        return ResponseEntity.ok(movie);
+        return ResponseEntity.ok(new ResultResponseDTO<>("OK", movie));
     }
 
     @GetMapping("/upcoming")
-    public ResponseEntity<List<Movie>> findAllUpcoming() {
-
+    public ResponseEntity<ResultResponseDTO<List<Movie>>> findAllUpcoming() {
         List<Movie> movies = movieService.findAllUpcoming();
-        return ResponseEntity.ok(movies);
+        return ResponseEntity.ok(new ResultResponseDTO<>("OK", movies));
     }
 
 }

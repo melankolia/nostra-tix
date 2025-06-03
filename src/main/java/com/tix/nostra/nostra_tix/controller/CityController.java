@@ -9,11 +9,12 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.tix.nostra.nostra_tix.domain.City;
+import com.tix.nostra.nostra_tix.dto.ResultResponseDTO;
 import com.tix.nostra.nostra_tix.dto.TheaterCountCity;
 import com.tix.nostra.nostra_tix.service.CityService;
 
 @RestController
-@RequestMapping("/cities")
+@RequestMapping("/api/cities")
 // /v1/city/{code}/cinema
 public class CityController {
 
@@ -21,15 +22,24 @@ public class CityController {
     private CityService cityService;
 
     @GetMapping
-    public ResponseEntity<List<City>> findAll() {
+    public ResponseEntity<ResultResponseDTO<List<City>>> findAll() {
         List<City> cities = cityService.findAll();
-        return ResponseEntity.ok(cities);
+
+        ResultResponseDTO<List<City>> resultResponseDTO = new ResultResponseDTO<>(
+                "OK",
+                cities);
+
+        return ResponseEntity.ok(resultResponseDTO);
     }
 
     @GetMapping("/total-theater")
-    public ResponseEntity<List<TheaterCountCity>> findAllTheaterCount() {
+    public ResponseEntity<ResultResponseDTO<List<TheaterCountCity>>> findAllTheaterCount() {
         List<TheaterCountCity> theaterCountCities = cityService.findAllTheaterCount();
 
-        return ResponseEntity.ok(theaterCountCities);
+        ResultResponseDTO<List<TheaterCountCity>> resultResponseDTO = new ResultResponseDTO<>(
+                "OK",
+                theaterCountCities);
+
+        return ResponseEntity.ok(resultResponseDTO);
     }
 }
