@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.tix.nostra.nostra_tix.dto.UserDetailResponseDTO;
+import com.tix.nostra.nostra_tix.dto.ResultResponseDTO;
 import com.tix.nostra.nostra_tix.service.UserService;
 
 import jakarta.validation.Valid;
@@ -21,9 +22,9 @@ public class UserController {
     private UserService userService;
 
     @GetMapping("/{email}/detail")
-    public ResponseEntity<UserDetailResponseDTO> getUserDetail(@PathVariable @Valid @NotBlank String email) {
-
+    public ResponseEntity<ResultResponseDTO<UserDetailResponseDTO>> getUserDetail(
+            @PathVariable @Valid @NotBlank String email) {
         UserDetailResponseDTO userDetail = userService.getUserDetail(email);
-        return ResponseEntity.ok(userDetail);
+        return ResponseEntity.ok(new ResultResponseDTO<>("OK", userDetail));
     }
 }

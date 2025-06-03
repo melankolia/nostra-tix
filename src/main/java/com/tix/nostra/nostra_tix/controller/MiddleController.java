@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.tix.nostra.nostra_tix.domain.Movie;
+import com.tix.nostra.nostra_tix.dto.ResultResponseDTO;
 import com.tix.nostra.nostra_tix.dto.UpdateMovieImagePresignedDTO;
 import com.tix.nostra.nostra_tix.projection.BookingListProjection;
 import com.tix.nostra.nostra_tix.service.BookingService;
@@ -33,24 +34,41 @@ public class MiddleController {
     private MovieService movieService;
 
     @GetMapping("/booking")
-    public ResponseEntity<List<BookingListProjection>> getBookingList() {
-        return ResponseEntity.ok(bookingService.findAllBookingList());
+    public ResponseEntity<ResultResponseDTO<List<BookingListProjection>>> getBookingList() {
+
+        List<BookingListProjection> result = bookingService.findAllBookingList();
+
+        ResultResponseDTO<List<BookingListProjection>> response = new ResultResponseDTO<>("OK", result);
+        return ResponseEntity.ok(response);
     }
 
     @PutMapping("/booking/{bookingId}/completed")
-    public ResponseEntity<Boolean> completeBooking(@PathVariable @NotNull Long bookingId) {
-        return ResponseEntity.ok(bookingService.completeBooking(bookingId));
+    public ResponseEntity<ResultResponseDTO<Boolean>> completeBooking(@PathVariable @NotNull Long bookingId) {
+        Boolean result = bookingService.completeBooking(bookingId);
+
+        ResultResponseDTO<Boolean> response = new ResultResponseDTO<>("OK", result);
+
+        return ResponseEntity.ok(response);
     }
 
     @PutMapping("/movie/{movieId}")
-    public ResponseEntity<Movie> updateMovie(@PathVariable @NotNull Long movieId,
+    public ResponseEntity<ResultResponseDTO<Movie>> updateMovie(@PathVariable @NotNull Long movieId,
             @RequestParam("file") MultipartFile file) {
-        return ResponseEntity.ok(movieService.updateMovie(movieId, file));
+        Movie result = movieService.updateMovie(movieId, file);
+
+        ResultResponseDTO<Movie> response = new ResultResponseDTO<>("OK", result);
+
+        return ResponseEntity.ok(response);
     }
 
     @PutMapping("/movie/{movieId}/presigned-url")
-    public ResponseEntity<Movie> updateMovieImage(@PathVariable @NotNull Long movieId,
+    public ResponseEntity<ResultResponseDTO<Movie>> updateMovieImage(@PathVariable @NotNull Long movieId,
             @RequestBody @Valid UpdateMovieImagePresignedDTO updateMovieImagePresignedDTO) {
-        return ResponseEntity.ok(movieService.updateMovie(movieId, updateMovieImagePresignedDTO.imageURI()));
+
+        Movie result = movieService.updateMovie(movieId, updateMovieImagePresignedDTO.imageURI());
+
+        ResultResponseDTO<Movie> response = new ResultResponseDTO<>("OK", result);
+
+        return ResponseEntity.ok(response);
     }
 }

@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.tix.nostra.nostra_tix.dto.FileResourceResponseDTO;
+import com.tix.nostra.nostra_tix.dto.ResultResponseDTO;
 import com.tix.nostra.nostra_tix.service.FileService;
 
 @RestController
@@ -21,25 +22,35 @@ public class FileResourceController {
     private FileService fileService;
 
     @PostMapping
-    public ResponseEntity<FileResourceResponseDTO> uploadFile(@RequestParam("file") MultipartFile file) {
+    public ResponseEntity<ResultResponseDTO<FileResourceResponseDTO>> uploadFile(
+            @RequestParam("file") MultipartFile file) {
         try {
             String filePath = fileService.uploadFile(file);
 
             FileResourceResponseDTO responseDTO = new FileResourceResponseDTO(filePath);
-            return ResponseEntity.ok(responseDTO);
+            ResultResponseDTO<FileResourceResponseDTO> resultResponseDTO = new ResultResponseDTO<>(
+                    "OK",
+                    responseDTO);
+
+            return ResponseEntity.ok(resultResponseDTO);
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body(new FileResourceResponseDTO("Failed to upload file: " + e.getMessage()));
+                    .body(new ResultResponseDTO<>(
+                            "Failed to upload file: " + e.getMessage(),
+                            null));
         }
     }
 
     @GetMapping("/presigned-url")
-    public ResponseEntity<FileResourceResponseDTO> generatePresignedUrl(@RequestParam("fileName") String fileName)
+    public ResponseEntity<ResultResponseDTO<FileResourceResponseDTO>> generatePresignedUrl(
+            @RequestParam("fileName") String fileName)
             throws Exception {
 
         String filePath = fileService.generatePresignedUrl(fileName);
 
-        FileResourceResponseDTO responseDTO = new FileResourceResponseDTO(filePath);
+        ResultResponseDTO<FileResourceResponseDTO> responseDTO = new ResultResponseDTO<>("OK",
+                new FileResourceResponseDTO(filePath));
+
         return ResponseEntity.ok(responseDTO);
     }
 }

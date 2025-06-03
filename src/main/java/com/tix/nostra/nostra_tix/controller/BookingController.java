@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.tix.nostra.nostra_tix.dto.BookingDTO;
 import com.tix.nostra.nostra_tix.dto.BookingScheduleResponseDTO;
 import com.tix.nostra.nostra_tix.dto.BookingSeatResponseDTO;
+import com.tix.nostra.nostra_tix.dto.ResultResponseDTO;
 import com.tix.nostra.nostra_tix.service.BookingService;
 
 import jakarta.validation.Valid;
@@ -26,20 +27,28 @@ public class BookingController {
     private BookingService bookingService;
 
     @PostMapping("/{scheduleId}")
-    public ResponseEntity<BookingScheduleResponseDTO> createBooking(
+    public ResponseEntity<ResultResponseDTO<BookingScheduleResponseDTO>> createBooking(
             @PathVariable @NotNull(message = "Schedule ID is required") Long scheduleId,
             @RequestBody @Valid BookingDTO bookingDTO) {
         Long bookingId = bookingService.createBooking(scheduleId, bookingDTO);
 
-        BookingScheduleResponseDTO bookingScheduleResponseDTO = new BookingScheduleResponseDTO(bookingId);
+        ResultResponseDTO<BookingScheduleResponseDTO> resultResponseDTO = new ResultResponseDTO<>(
+                "OK",
+                new BookingScheduleResponseDTO(bookingId));
 
-        return ResponseEntity.ok(bookingScheduleResponseDTO);
+        return ResponseEntity.ok(resultResponseDTO);
     }
 
     @GetMapping("/{scheduleId}")
-    public ResponseEntity<BookingSeatResponseDTO> findAll(@PathVariable Long scheduleId,
+    public ResponseEntity<ResultResponseDTO<BookingSeatResponseDTO>> findAll(@PathVariable Long scheduleId,
             @RequestParam @NotNull Long studioId) {
-        return ResponseEntity.ok(bookingService.findAll(scheduleId, studioId));
+        BookingSeatResponseDTO bookingSeatResponseDTO = bookingService.findAll(scheduleId, studioId);
+
+        ResultResponseDTO<BookingSeatResponseDTO> resultResponseDTO = new ResultResponseDTO<>(
+                "OK",
+                bookingSeatResponseDTO);
+
+        return ResponseEntity.ok(resultResponseDTO);
     }
 
 }
