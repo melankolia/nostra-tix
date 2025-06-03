@@ -10,6 +10,7 @@ import com.tix.nostra.nostra_tix.dto.UserRegisterRequestDTO;
 import com.tix.nostra.nostra_tix.dto.UserRegisterResponseDTO;
 import com.tix.nostra.nostra_tix.exception.DuplicateUserDataException;
 import com.tix.nostra.nostra_tix.exception.ResourceNotFoundException;
+import com.tix.nostra.nostra_tix.projection.UserDetailProjection;
 import com.tix.nostra.nostra_tix.repository.UserRepository;
 import com.tix.nostra.nostra_tix.service.UserService;
 
@@ -52,16 +53,16 @@ public class UserServiceImpl implements UserService {
         userToRegister.setPhoneNo(user.phoneNo());
         userToRegister.setPassword(user.password());
 
-        User userRegistered = userRepository.save(userToRegister);
+        userRepository.save(userToRegister);
         return new UserRegisterResponseDTO(
-                userRegistered.getName(),
-                userRegistered.getEmail(),
-                userRegistered.getPhoneNo());
+                userToRegister.getName(),
+                userToRegister.getEmail(),
+                userToRegister.getPhoneNo());
     }
 
     @Override
     public UserDetailResponseDTO getUserDetail(String email) {
-        User user = userRepository.findByEmail(email);
+        UserDetailProjection user = userRepository.findByEmail(email);
         if (user == null) {
             throw new ResourceNotFoundException("User not found with email: " + email);
         }

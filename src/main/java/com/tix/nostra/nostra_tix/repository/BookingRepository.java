@@ -8,6 +8,7 @@ import org.springframework.data.repository.query.Param;
 
 import com.tix.nostra.nostra_tix.domain.Booking;
 import com.tix.nostra.nostra_tix.projection.BookingListProjection;
+import com.tix.nostra.nostra_tix.projection.BookingWithSeatsProjection;
 import com.tix.nostra.nostra_tix.projection.UserTicketProjection;
 
 public interface BookingRepository extends JpaRepository<Booking, Long> {
@@ -26,6 +27,15 @@ public interface BookingRepository extends JpaRepository<Booking, Long> {
        List<Booking> findByScheduleId(Long scheduleId);
 
        List<Booking> findByUserId(Long userId);
+
+       @Query("""
+                     SELECT b.id as id,
+                            s.id as seatId
+                     FROM Booking b
+                     JOIN b.seats s
+                     WHERE b.schedule.id = :scheduleId
+                     """)
+       List<BookingWithSeatsProjection> findBookingsWithSeatsByScheduleId(@Param("scheduleId") Long scheduleId);
 
        @Query("""
                      SELECT b.id as id,
