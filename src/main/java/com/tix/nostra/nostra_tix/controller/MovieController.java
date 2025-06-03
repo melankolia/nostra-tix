@@ -10,9 +10,6 @@ import org.springframework.web.multipart.MultipartFile;
 import com.tix.nostra.nostra_tix.domain.Movie;
 import com.tix.nostra.nostra_tix.service.MovieService;
 import com.tix.nostra.nostra_tix.dto.ResultResponseDTO;
-import com.tix.nostra.nostra_tix.dto.MovieRequestDTO;
-
-import jakarta.validation.Valid;
 
 @RestController
 @RequestMapping("/api/movies")
@@ -39,20 +36,6 @@ public class MovieController {
         return ResponseEntity.ok(new ResultResponseDTO<>("OK", movies));
     }
 
-    @PostMapping
-    public ResponseEntity<ResultResponseDTO<Movie>> createMovie(@RequestBody @Valid MovieRequestDTO movieRequestDTO) {
-        Movie movie = movieService.createMovie(movieRequestDTO);
-        return ResponseEntity.ok(new ResultResponseDTO<>("OK", movie));
-    }
-
-    @PutMapping("/{id}")
-    public ResponseEntity<ResultResponseDTO<Movie>> updateMovie(
-            @PathVariable Long id,
-            @RequestBody @Valid MovieRequestDTO movieRequestDTO) {
-        Movie movie = movieService.updateMovie(id, movieRequestDTO);
-        return ResponseEntity.ok(new ResultResponseDTO<>("OK", movie));
-    }
-
     @PutMapping("/{id}/image")
     public ResponseEntity<ResultResponseDTO<Movie>> updateMovieImage(
             @PathVariable Long id,
@@ -69,9 +52,4 @@ public class MovieController {
         return ResponseEntity.ok(new ResultResponseDTO<>("OK", movie));
     }
 
-    @DeleteMapping("/{id}")
-    public ResponseEntity<ResultResponseDTO<Boolean>> deleteMovie(@PathVariable Long id) {
-        movieService.deleteMovie(id);
-        return ResponseEntity.ok(new ResultResponseDTO<>("OK", true));
-    }
 }
