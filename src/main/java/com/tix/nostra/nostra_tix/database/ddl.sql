@@ -217,7 +217,7 @@ CREATE TABLE schedule (
 	studio_id int8 NULL,
 	CONSTRAINT schedule_pkey PRIMARY KEY (id),
 	CONSTRAINT fka6hosaihwhtb3scvamdyh9mlv FOREIGN KEY (movie_id) REFERENCES movie(id),
-	CONSTRAINT fki0lda4gvpvspv1cywe9skv40m FOREIGN KEY (studio_id) REFERENCES studio(id)
+	CONSTRAINT fki0lda4gvpvspv1cywe9skv40m FOREIGN KEY (studio_id) REFERENCES <?>()
 );
 
 
@@ -258,10 +258,10 @@ CREATE TABLE booking (
 	schedule_id int8 NULL,
 	user_id int8 NULL,
 	expired_date timestamp(6) NULL,
-	CONSTRAINT booking_booking_status_enum_check CHECK (((booking_status_enum)::text = ANY ((ARRAY['PAID'::character varying, 'WAITING'::character varying, 'CANCELLED'::character varying])::text[]))),
+	CONSTRAINT booking_booking_status_enum_check CHECK (((booking_status_enum)::text = ANY (ARRAY[('PAID'::character varying)::text, ('WAITING'::character varying)::text, ('CANCELLED'::character varying)::text, ('COMPLETED'::character varying)::text]))),
 	CONSTRAINT booking_pkey PRIMARY KEY (id),
 	CONSTRAINT fk7udbel7q86k041591kj6lfmvw FOREIGN KEY (user_id) REFERENCES users(id),
-	CONSTRAINT fkdkador5s62nuvhdf672u65fs9 FOREIGN KEY (schedule_id) REFERENCES schedule(id)
+	CONSTRAINT fkdkador5s62nuvhdf672u65fs9 FOREIGN KEY (schedule_id) REFERENCES <?>()
 );
 
 

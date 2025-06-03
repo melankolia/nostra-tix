@@ -1,6 +1,15 @@
+minio:
+  url: http://172.17.0.2:9000
+  access-key: zKNvzp774xvfxTvbHQHd
+  secret-key: UA0RXKyp1P03BiMdcrIjoCV7DKLUd5ZYHykiCvap
+  bucket: nostra-tix
 spring:
   application:
     name: nostra-tix
+  servlet:
+    multipart:
+      max-file-size: -1
+      max-request-size: -1
   datasource:
     hikari:
       connection-timeout: 30000
