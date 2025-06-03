@@ -23,6 +23,9 @@ import com.tix.nostra.nostra_tix.dto.UserTicketResponseDTO;
 import com.tix.nostra.nostra_tix.exception.DuplicateUserDataException;
 import com.tix.nostra.nostra_tix.exception.ResourceNotFoundException;
 import com.tix.nostra.nostra_tix.projection.BookingListProjection;
+import com.tix.nostra.nostra_tix.projection.BookingWithSeatsProjection;
+import com.tix.nostra.nostra_tix.projection.ScheduleByIdProjection;
+import com.tix.nostra.nostra_tix.projection.SeatByStudioIdProjection;
 import com.tix.nostra.nostra_tix.projection.UserTicketProjection;
 import com.tix.nostra.nostra_tix.repository.BookingRepository;
 import com.tix.nostra.nostra_tix.repository.ScheduleRepository;
@@ -50,46 +53,41 @@ public class BookingServiceImpl implements BookingService {
 
     @Override
     public BookingSeatResponseDTO findAll(Long scheduleId, Long studioId) {
-        Schedule schedule = scheduleRepository.findById(scheduleId)
-                .orElseThrow(() -> new ResourceNotFoundException("Schedule not found"));
+        ScheduleByIdProjection schedule = scheduleRepository.findByIdProjectedBy(scheduleId);
+        if (schedule == null) {
+            throw new ResourceNotFoundException("Schedule not found");
+        }
 
         MovieScheduleDTO movieScheduleDTO = new MovieScheduleDTO(
-                schedule.getMovie().getId(),
-                schedule.getMovie().getName(),
-                schedule.getMovie().getImageURI(),
+                schedule.getId(),
+                schedule.getMovieName(),
+                schedule.getMovieImageURI(),
                 schedule.getShowTime(),
                 schedule.getEndShowTime(),
-                schedule.getStudio().getTheater().getName(),
-                schedule.getStudio().getName());
+                schedule.getTheaterName(),
+                schedule.getStudioName());
 
-        List<Booking> bookings = bookingRepository.findByScheduleId(scheduleId);
-        List<Seat> seats = seatRepository.findByStudioId(studioId);
-        List<BookingSeatDTO> bookingSeats = new ArrayList<>();
+        List<BookingWithSeatsProjection> bookingSeats = bookingRepository.findBookingsWithSeatsByScheduleId(scheduleId);
+        List<SeatByStudioIdProjection> seats = seatRepository.findByStudioIdProjectedBy(studioId);
+        List<BookingSeatDTO> bookingSeatsDTO = new ArrayList<>();
 
-        for (Seat seat : seats) {
-            boolean isBooked = false;
-            for (Booking booking : bookings) {
-                if (booking.getSeats().contains(seat)) {
-                    isBooked = true;
-                    break;
-                }
-            }
+        for (SeatByStudioIdProjection seat : seats) {
+            boolean isBooked = bookingSeats.stream()
+                    .anyMatch(booking -> booking.getSeatId().equals(seat.getId()));
 
-            bookingSeats.add(new BookingSeatDTO(
+            bookingSeatsDTO.add(new BookingSeatDTO(
                     seat.getId(),
                     seat.getSeatNumber(),
                     seat.getRowIndex(),
                     seat.getColumnIndex(),
-                    seat.getSeatType().getName(),
-                    seat.getSeatType().getAdditionalPrice(),
+                    seat.getSeatTypeName(),
+                    seat.getAdditionalPrice(),
                     isBooked,
                     seat.getAvailable(),
                     seat.getVisible()));
         }
 
-        BookingSeatResponseDTO bookingSeatResponseDTO = new BookingSeatResponseDTO(movieScheduleDTO, bookingSeats);
-
-        return bookingSeatResponseDTO;
+        return new BookingSeatResponseDTO(movieScheduleDTO, bookingSeatsDTO);
     }
 
     @Override
