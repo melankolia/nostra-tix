@@ -233,10 +233,6 @@ public class BookingServiceImpl implements BookingService {
             throw new ResourceNotFoundException("Booking expired");
         }
 
-        if (booking.getStatus().equals(BookingStatusEnum.PAID)) {
-            throw new ResourceNotFoundException("Booking already paid");
-        }
-
         if (booking.getStatus().equals(BookingStatusEnum.CANCELLED)) {
             throw new ResourceNotFoundException("Booking cancelled");
         }
