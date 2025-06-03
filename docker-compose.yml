@@ -1,0 +1,42 @@
+services:
+  app:
+    image: ageng/m-tix
+    ports:
+      - "8080:8080"
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://db:5432/m-tix
+      SPRING_DATASOURCE_PASSWORD: Welcome1!
+      SPRING_DATASOURCE_USERNAME: postgres
+    depends_on:
+      - db
+
+  db:
+    image: postgres:15
+    environment:
+      POSTGRES_DB: m-tix
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: Welcome1!
+    ports:
+      - "5433:5432"
+    volumes:
+    - m_tix_volume:/var/lib/postgresql/data
+
+
+  minio:
+    image: quay.io/minio/minio:latest
+    ports:
+      - "9000:9000"      # API
+      - "9001:9001"      # Console UI
+    environment:
+      MINIO_ROOT_USER: ROOTNAME
+      MINIO_ROOT_PASSWORD: CHANGEME123
+    command: server /data --console-address ":9001"
+    volumes:
+      - minio_volume:/data
+
+
+volumes:
+  m_tix_volume:
+    external: true
+  minio_volume:
+    external: true
