@@ -57,7 +57,8 @@ public class UserServiceImpl implements UserService {
         return new UserRegisterResponseDTO(
                 userToRegister.getName(),
                 userToRegister.getEmail(),
-                userToRegister.getPhoneNo());
+                userToRegister.getPhoneNo(),
+                userToRegister.getId());
     }
 
     @Override
