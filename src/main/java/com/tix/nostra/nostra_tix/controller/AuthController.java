@@ -35,14 +35,11 @@ public class AuthController {
     }
 
     @PostMapping("/login")
-    public ResponseEntity<UserLoginResponseDTO> login(@RequestBody UserLoginDTO userLoginDTO) {
-        try {
+    public ResponseEntity<UserLoginResponseDTO> login(@RequestBody @Valid UserLoginDTO userLoginDTO) {
 
-            userService.login(userLoginDTO);
+        UserLoginDTO user = userService.login(userLoginDTO);
 
-            return ResponseEntity.ok(new UserLoginResponseDTO("success", "Login successful"));
-        } catch (RuntimeException e) {
-            return ResponseEntity.badRequest().body(new UserLoginResponseDTO("error", e.getMessage()));
-        }
+        return ResponseEntity.ok(new UserLoginResponseDTO("success", "Login successful", user.userId()));
+
     }
 }
