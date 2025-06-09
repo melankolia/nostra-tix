@@ -4,6 +4,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.tix.nostra.nostra_tix.config.MinioProperties;
+import com.tix.nostra.nostra_tix.dto.PresignedURLResponseDTO;
 import com.tix.nostra.nostra_tix.service.FileService;
 
 import io.minio.GetPresignedObjectUrlArgs;
@@ -35,7 +36,7 @@ public class FileServiceImpl implements FileService {
     }
 
     @Override
-    public String generatePresignedUrl(String fileName) throws Exception {
+    public PresignedURLResponseDTO generatePresignedUrl(String fileName) throws Exception {
         GetPresignedObjectUrlArgs args = GetPresignedObjectUrlArgs.builder()
                 .bucket(minioProperties.getBucket())
                 .object(fileName)
@@ -43,7 +44,8 @@ public class FileServiceImpl implements FileService {
                 .build();
 
         String url = minioClient.getPresignedObjectUrl(args);
+        String path = "/" + minioProperties.getBucket() + "/" + fileName;
 
-        return url;
+        return new PresignedURLResponseDTO(url, path);
     }
 }
