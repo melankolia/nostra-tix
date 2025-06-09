@@ -29,7 +29,7 @@ public class UserServiceImpl implements UserService {
             if (!user.getPassword().equals(userLoginDTO.password())) {
                 throw new RuntimeException("Invalid password for user: " + userLoginDTO.userLogin());
             }
-            return new UserLoginDTO(user.getEmail(), user.getPassword());
+            return new UserLoginDTO(user.getEmail(), user.getPassword(), user.getId());
         } catch (Exception e) {
             throw new RuntimeException("Error during login process", e);
         }
