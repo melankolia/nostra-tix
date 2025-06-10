@@ -19,6 +19,7 @@ import com.tix.nostra.nostra_tix.domain.Booking;
 import com.tix.nostra.nostra_tix.domain.Schedule;
 import com.tix.nostra.nostra_tix.domain.Seat;
 import com.tix.nostra.nostra_tix.domain.SeatType;
+import com.tix.nostra.nostra_tix.domain.Studio;
 import com.tix.nostra.nostra_tix.domain.StudioType;
 import com.tix.nostra.nostra_tix.domain.User;
 import com.tix.nostra.nostra_tix.dto.BookingDTO;
@@ -36,6 +37,7 @@ import com.tix.nostra.nostra_tix.projection.UserTicketProjection;
 import com.tix.nostra.nostra_tix.repository.BookingRepository;
 import com.tix.nostra.nostra_tix.repository.ScheduleRepository;
 import com.tix.nostra.nostra_tix.repository.SeatRepository;
+import com.tix.nostra.nostra_tix.repository.StudioRepository;
 import com.tix.nostra.nostra_tix.repository.StudioTypeRepository;
 import com.tix.nostra.nostra_tix.repository.UserRepository;
 import com.tix.nostra.nostra_tix.service.BookingService;
@@ -59,7 +61,7 @@ public class BookingServiceImpl implements BookingService {
     private UserRepository userRepository;
 
     @Autowired
-    private StudioTypeRepository studioTypeRepository;
+    private StudioRepository studioRepository;
 
     @Override
     public BookingSeatResponseDTO findAll(Long scheduleId, Long studioId) {
@@ -77,8 +79,8 @@ public class BookingServiceImpl implements BookingService {
                 schedule.getTheaterName(),
                 schedule.getStudioName());
 
-        StudioType studioType = studioTypeRepository.findById(studioId)
-                .orElseThrow(() -> new ResourceNotFoundException("Studio type not found"));
+        Studio studio = studioRepository.findById(studioId)
+                .orElseThrow(() -> new ResourceNotFoundException("Studio not found"));
 
         List<BookingWithSeatsProjection> bookingSeats = bookingRepository.findBookingsWithSeatsByScheduleId(scheduleId);
         List<SeatByStudioIdProjection> seats = seatRepository.findByStudioIdProjectedBy(studioId);
@@ -100,7 +102,7 @@ public class BookingServiceImpl implements BookingService {
                     seat.getVisible()));
         }
 
-        return new BookingSeatResponseDTO(movieScheduleDTO, bookingSeatsDTO, studioType);
+        return new BookingSeatResponseDTO(movieScheduleDTO, bookingSeatsDTO, studio.getStudioType());
     }
 
     @Override
