@@ -1,4 +1,4 @@
-package com.tix.nostra.nostra_tix.security;
+package com.tix.nostra.nostra_tix.security.handler;
 
 import java.io.IOException;
 import java.util.HashMap;
@@ -29,7 +29,6 @@ public class UsernamePasswordAuthFailureHandler implements AuthenticationFailure
     @Override
     public void onAuthenticationFailure(HttpServletRequest request, HttpServletResponse response,
             AuthenticationException exception) throws IOException, ServletException {
-        // TODO Auto-generated method stub
 
         Map<String, String> responseBody = new HashMap<>();
         responseBody.put("result", "Authentication failed");

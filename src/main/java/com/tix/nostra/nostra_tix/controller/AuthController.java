@@ -8,8 +8,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.tix.nostra.nostra_tix.dto.ResultResponseDTO;
-import com.tix.nostra.nostra_tix.dto.UserLoginDTO;
-import com.tix.nostra.nostra_tix.dto.UserLoginResponseDTO;
 import com.tix.nostra.nostra_tix.dto.UserRegisterRequestDTO;
 import com.tix.nostra.nostra_tix.dto.UserRegisterResponseDTO;
 import com.tix.nostra.nostra_tix.service.UserService;
@@ -31,15 +29,5 @@ public class AuthController {
 
         ResultResponseDTO<UserRegisterResponseDTO> resultResponseDTO = new ResultResponseDTO<>("OK", registeredUser);
         return ResponseEntity.ok(resultResponseDTO);
-
-    }
-
-    @PostMapping("/login")
-    public ResponseEntity<UserLoginResponseDTO> login(@RequestBody @Valid UserLoginDTO userLoginDTO) {
-
-        UserLoginDTO user = userService.login(userLoginDTO);
-
-        return ResponseEntity.ok(new UserLoginResponseDTO("success", "Login successful", user.userId()));
-
     }
 }
