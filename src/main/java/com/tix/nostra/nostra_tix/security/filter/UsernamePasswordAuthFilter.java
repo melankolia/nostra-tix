@@ -37,11 +37,11 @@ public class UsernamePasswordAuthFilter extends AbstractAuthenticationProcessing
 
         LoginRequestDTO loginDto = objectMapper.readValue(request.getReader(), LoginRequestDTO.class);
 
-        if (loginDto.email() == null || loginDto.otp() == null) {
-            throw new BadRequestException("Email or OTP is missing");
+        if (loginDto.email() == null || loginDto.password() == null) {
+            throw new BadRequestException("Email or password is missing");
         }
         UsernamePasswordAuthenticationToken token = new UsernamePasswordAuthenticationToken(loginDto.email(),
-                loginDto.otp());
+                loginDto.password());
 
         return this.getAuthenticationManager().authenticate(token);
     }

@@ -19,10 +19,13 @@ import org.springframework.security.web.authentication.AuthenticationSuccessHand
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.tix.nostra.nostra_tix.security.filter.EmailAuthFilter;
 import com.tix.nostra.nostra_tix.security.filter.JwtAuthFilter;
 import com.tix.nostra.nostra_tix.security.filter.UsernamePasswordAuthFilter;
+import com.tix.nostra.nostra_tix.security.handler.EmailSuccessHandler;
 import com.tix.nostra.nostra_tix.security.handler.UsernamePasswordAuthFailureHandler;
 import com.tix.nostra.nostra_tix.security.handler.UsernamePasswordAuthSuccessHandler;
+import com.tix.nostra.nostra_tix.security.provider.EmailAuthProvider;
 import com.tix.nostra.nostra_tix.security.provider.JwtAuthProvider;
 import com.tix.nostra.nostra_tix.security.provider.UsernamePasswordAuthProvider;
 import com.tix.nostra.nostra_tix.security.util.JwtTokenFactory;
@@ -34,33 +37,43 @@ import com.tix.nostra.nostra_tix.security.util.SkipPathRequestMatcher;
 public class SecurityConfig {
 
     private final static String AUTH_URL = "/api/auth/login";
-    private final static String AUTH_ALL_LOGIN_PATHS = "/api/auth/login/**";
+    private final static String AUTH_EMAIL = "/api/auth/email";
     private final static String API = "/api/**";
 
-    private final static List<String> PERMS = List.of(AUTH_URL, AUTH_ALL_LOGIN_PATHS);
+    private final static List<String> PERMS = List.of(AUTH_URL, AUTH_EMAIL);
     private final static List<String> AUTH = List.of(API);
 
     @Autowired
     private JwtAuthProvider jwtAuthProvider;
 
     @Autowired
+    private EmailAuthProvider emailAuthProvider;
+
+    @Autowired
     private UsernamePasswordAuthProvider usernamePasswordAuthProvider;
 
     @Autowired
     void registerProvider(AuthenticationManagerBuilder auth) throws Exception {
-        auth.authenticationProvider(usernamePasswordAuthProvider)
+        auth
+                .authenticationProvider(emailAuthProvider)
+                .authenticationProvider(usernamePasswordAuthProvider)
                 .authenticationProvider(jwtAuthProvider);
     }
 
     @Bean
-    public AuthenticationFailureHandler usernamePasswordAuthFailureHandler(ObjectMapper objectMapper) {
+    public UsernamePasswordAuthFailureHandler usernamePasswordAuthFailureHandler(ObjectMapper objectMapper) {
         return new UsernamePasswordAuthFailureHandler(objectMapper);
     }
 
     @Bean
-    public AuthenticationSuccessHandler usernamePasswordAuthSuccessHandler(ObjectMapper objectMapper,
+    public UsernamePasswordAuthSuccessHandler usernamePasswordAuthSuccessHandler(ObjectMapper objectMapper,
             JwtTokenFactory jwtTokenFactory) {
         return new UsernamePasswordAuthSuccessHandler(objectMapper, jwtTokenFactory);
+    }
+
+    @Bean
+    public EmailSuccessHandler emailSuccessHandler(ObjectMapper objectMapper) {
+        return new EmailSuccessHandler(objectMapper);
     }
 
     @Bean
@@ -70,7 +83,7 @@ public class SecurityConfig {
 
     @Bean
     public UsernamePasswordAuthFilter usernamePasswordAuthFilter(ObjectMapper objectMapper,
-            AuthenticationSuccessHandler successHandler,
+            UsernamePasswordAuthSuccessHandler successHandler,
             AuthenticationFailureHandler failedHandler,
             AuthenticationManager manager) {
 
@@ -90,19 +103,32 @@ public class SecurityConfig {
     }
 
     @Bean
+    public EmailAuthFilter emailAuthFilter(
+            ObjectMapper objectMapper,
+            EmailSuccessHandler successHandler,
+            AuthenticationFailureHandler failureHandler,
+            AuthenticationManager manager) {
+        EmailAuthFilter filter = new EmailAuthFilter(
+                AUTH_EMAIL, successHandler, failureHandler, objectMapper);
+        filter.setAuthenticationManager(manager);
+        return filter;
+    }
+
+    @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http,
             UsernamePasswordAuthFilter usernamePasswordAuthFilter, JwtAuthFilter jwtAuthFilter)
             throws Exception {
         http.authorizeHttpRequests(auth -> auth
-                .requestMatchers(AUTH_ALL_LOGIN_PATHS).permitAll()
+                .requestMatchers(AUTH_EMAIL).permitAll()
                 .requestMatchers(AUTH_URL).permitAll()
                 .requestMatchers(API).authenticated())
                 .csrf(AbstractHttpConfigurer::disable)
                 .sessionManagement((sessionManagement) -> sessionManagement
                         .sessionCreationPolicy(SessionCreationPolicy.STATELESS));
 
-        http.addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class)
-                .addFilterBefore(usernamePasswordAuthFilter, UsernamePasswordAuthenticationFilter.class);
+        http
+                .addFilterBefore(usernamePasswordAuthFilter, UsernamePasswordAuthenticationFilter.class)
+                .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
     }
