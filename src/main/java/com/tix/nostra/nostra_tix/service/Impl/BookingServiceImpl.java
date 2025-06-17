@@ -5,8 +5,12 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
+import java.util.Comparator;
+import java.util.HashSet;
+import java.util.HashMap;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -14,6 +18,9 @@ import org.springframework.stereotype.Service;
 import com.tix.nostra.nostra_tix.domain.Booking;
 import com.tix.nostra.nostra_tix.domain.Schedule;
 import com.tix.nostra.nostra_tix.domain.Seat;
+import com.tix.nostra.nostra_tix.domain.SeatType;
+import com.tix.nostra.nostra_tix.domain.Studio;
+import com.tix.nostra.nostra_tix.domain.StudioType;
 import com.tix.nostra.nostra_tix.domain.User;
 import com.tix.nostra.nostra_tix.dto.BookingDTO;
 import com.tix.nostra.nostra_tix.dto.BookingSeatDTO;
@@ -30,6 +37,8 @@ import com.tix.nostra.nostra_tix.projection.UserTicketProjection;
 import com.tix.nostra.nostra_tix.repository.BookingRepository;
 import com.tix.nostra.nostra_tix.repository.ScheduleRepository;
 import com.tix.nostra.nostra_tix.repository.SeatRepository;
+import com.tix.nostra.nostra_tix.repository.StudioRepository;
+import com.tix.nostra.nostra_tix.repository.StudioTypeRepository;
 import com.tix.nostra.nostra_tix.repository.UserRepository;
 import com.tix.nostra.nostra_tix.service.BookingService;
 import com.tix.nostra.nostra_tix.util.BookingStatusEnum;
@@ -51,6 +60,9 @@ public class BookingServiceImpl implements BookingService {
     @Autowired
     private UserRepository userRepository;
 
+    @Autowired
+    private StudioRepository studioRepository;
+
     @Override
     public BookingSeatResponseDTO findAll(Long scheduleId, Long studioId) {
         ScheduleByIdProjection schedule = scheduleRepository.findByIdProjectedBy(scheduleId);
@@ -66,6 +78,9 @@ public class BookingServiceImpl implements BookingService {
                 schedule.getEndShowTime(),
                 schedule.getTheaterName(),
                 schedule.getStudioName());
+
+        Studio studio = studioRepository.findById(studioId)
+                .orElseThrow(() -> new ResourceNotFoundException("Studio not found"));
 
         List<BookingWithSeatsProjection> bookingSeats = bookingRepository.findBookingsWithSeatsByScheduleId(scheduleId);
         List<SeatByStudioIdProjection> seats = seatRepository.findByStudioIdProjectedBy(studioId);
@@ -87,7 +102,7 @@ public class BookingServiceImpl implements BookingService {
                     seat.getVisible()));
         }
 
-        return new BookingSeatResponseDTO(movieScheduleDTO, bookingSeatsDTO);
+        return new BookingSeatResponseDTO(movieScheduleDTO, bookingSeatsDTO, studio.getStudioType());
     }
 
     @Override
@@ -178,34 +193,81 @@ public class BookingServiceImpl implements BookingService {
     @Override
     @Transactional
     public Long createBooking(Long scheduleId, BookingDTO bookingDTO) {
+        // 1. Cek apakah user sudah punya booking aktif
         List<Booking> existingBookings = bookingRepository.findByUserId(bookingDTO.userId());
         if (!existingBookings.isEmpty()) {
             Booking existingBooking = existingBookings.get(0);
             if (existingBooking.getExpiredDate().after(new Date()) &&
                     existingBooking.getStatus() == BookingStatusEnum.WAITING) {
-                throw new DuplicateUserDataException("User already has an active booking for this schedule");
+                throw new DuplicateUserDataException("User sudah memiliki booking aktif");
             }
         }
 
+        // 2. Cek apakah schedule dan user valid
         Schedule schedule = scheduleRepository.findById(scheduleId)
-                .orElseThrow(() -> new ResourceNotFoundException("Schedule not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("Schedule tidak ditemukan"));
 
         User user = userRepository.findById(bookingDTO.userId())
-                .orElseThrow(() -> new ResourceNotFoundException("User not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("User tidak ditemukan"));
 
-        // Calculate total price based on schedule price and seat additional prices
+        // 3. Ambil data kursi yang sudah dibooking
+        List<BookingWithSeatsProjection> bookedSeats = bookingRepository.findBookingsWithSeatsByScheduleId(scheduleId);
+        List<Long> bookedSeatIds = bookedSeats.stream()
+                .map(BookingWithSeatsProjection::getSeatId)
+                .collect(Collectors.toList());
+
+        // 4. Validasi kursi yang dipilih
+        Set<Seat> selectedSeats = new HashSet<>();
+        for (Long seatId : bookingDTO.seatIds()) {
+            // 4a. Cek apakah kursi ada
+            Seat seat = seatRepository.findById(seatId)
+                    .orElseThrow(() -> new ResourceNotFoundException("Kursi tidak ditemukan"));
+
+            // 4b. Cek apakah kursi sudah dibooking
+            if (bookedSeatIds.contains(seatId)) {
+                throw new DuplicateUserDataException("Kursi " + seat.getSeatNumber() + " sudah dibooking");
+            }
+
+            selectedSeats.add(seat);
+        }
+
+        // 5. Cek kursi mati (single gap)
+        List<Seat> selectedSeatsList = new ArrayList<>(selectedSeats);
+        List<SeatByStudioIdProjection> allSeats = seatRepository
+                .findByStudioIdAndRowIndexProjectedBy(schedule.getStudio().getId(),
+                        selectedSeatsList.get(0).getRowIndex());
+
+        // Cek setiap 3 kursi berurutan
+        for (int i = 0; i < allSeats.size() - 2; i++) {
+            SeatByStudioIdProjection kursi1 = allSeats.get(i);
+            SeatByStudioIdProjection kursi2 = allSeats.get(i + 1);
+            SeatByStudioIdProjection kursi3 = allSeats.get(i + 2);
+
+            // Cek apakah kursi dipilih atau sudah dibooking
+            boolean kursi1Terisi = selectedSeats.stream().anyMatch(s -> s.getId().equals(kursi1.getId()))
+                    || bookedSeatIds.contains(kursi1.getId());
+            boolean kursi2Terisi = selectedSeats.stream().anyMatch(s -> s.getId().equals(kursi2.getId()))
+                    || bookedSeatIds.contains(kursi2.getId());
+            boolean kursi3Terisi = selectedSeats.stream().anyMatch(s -> s.getId().equals(kursi3.getId()))
+                    || bookedSeatIds.contains(kursi3.getId());
+
+            // Jika kursi 1 dan 3 terisi tapi kursi 2 kosong = kursi mati
+            if (kursi1Terisi && !kursi2Terisi && kursi3Terisi) {
+                throw new DuplicateUserDataException(
+                        "Tidak boleh ada kursi kosong sendirian di antara kursi " +
+                                kursi1.getSeatNumber() + " dan " + kursi3.getSeatNumber());
+            }
+        }
+
+        // 6. Hitung total harga
         BigDecimal totalPrice = schedule.getPrice();
-        Set<Seat> selectedSeats = bookingDTO.seatIds().stream()
-                .map(seatId -> seatRepository.findById(seatId)
-                        .orElseThrow(() -> new ResourceNotFoundException("Seat not found")))
-                .collect(Collectors.toSet());
-
         for (Seat seat : selectedSeats) {
             if (seat.getSeatType() != null && seat.getSeatType().getAdditionalPrice() != null) {
                 totalPrice = totalPrice.add(seat.getSeatType().getAdditionalPrice());
             }
         }
 
+        // 7. Buat booking baru
         Booking booking = new Booking();
         booking.setSchedule(schedule);
         booking.setUser(user);
@@ -214,11 +276,11 @@ public class BookingServiceImpl implements BookingService {
         booking.setOrderDate(new Date());
         booking.setTotalPrice(totalPrice);
         booking.setPaid(false);
-        booking.setExpiredDate(new Date(System.currentTimeMillis() + 1000 * 60 * 10));
+        booking.setExpiredDate(new Date(System.currentTimeMillis() + 1000 * 60 * 10)); // Expired dalam 10 menit
 
+        // 8. Simpan dan return ID booking
         booking = bookingRepository.save(booking);
-        Long bookingId = booking.getId();
-        return bookingId;
+        return booking.getId();
     }
 
     @Override

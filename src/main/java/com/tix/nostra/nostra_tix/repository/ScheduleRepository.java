@@ -5,6 +5,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 
 import com.tix.nostra.nostra_tix.domain.Schedule;
 import com.tix.nostra.nostra_tix.projection.ScheduleByIdProjection;
@@ -32,9 +33,11 @@ public interface ScheduleRepository extends JpaRepository<Schedule, Long> {
                                    s.showTime as showTime,
                                    s.endShowTime as endShowTime,
                                    s.studio.theater.name as theaterName,
-                                   s.studio.name as studioName
+                                   s.studio.name as studioName,
+                                   s.studio.id as studioId,
+                                   s.price as price
                             FROM Schedule s
                             WHERE s.id = :id
                         """)
-        ScheduleByIdProjection findByIdProjectedBy(Long id);
+        ScheduleByIdProjection findByIdProjectedBy(@Param("id") Long id);
 }

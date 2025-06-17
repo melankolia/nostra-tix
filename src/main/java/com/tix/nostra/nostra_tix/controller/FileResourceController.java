@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.tix.nostra.nostra_tix.dto.FileResourceResponseDTO;
+import com.tix.nostra.nostra_tix.dto.PresignedURLResponseDTO;
 import com.tix.nostra.nostra_tix.dto.ResultResponseDTO;
 import com.tix.nostra.nostra_tix.service.FileService;
 
@@ -42,14 +43,16 @@ public class FileResourceController {
     }
 
     @GetMapping("/presigned-url")
-    public ResponseEntity<ResultResponseDTO<FileResourceResponseDTO>> generatePresignedUrl(
+    public ResponseEntity<ResultResponseDTO<PresignedURLResponseDTO>> generatePresignedUrl(
             @RequestParam("fileName") String fileName)
             throws Exception {
 
-        String filePath = fileService.generatePresignedUrl(fileName);
+        PresignedURLResponseDTO filePath = fileService.generatePresignedUrl(fileName);
 
-        ResultResponseDTO<FileResourceResponseDTO> responseDTO = new ResultResponseDTO<>("OK",
-                new FileResourceResponseDTO(filePath));
+        ResultResponseDTO<PresignedURLResponseDTO> responseDTO = new ResultResponseDTO<>(
+                "OK",
+                new PresignedURLResponseDTO(filePath.url(),
+                        filePath.fullPath()));
 
         return ResponseEntity.ok(responseDTO);
     }

@@ -1,7 +1,7 @@
 minio:
-  url: ${MINIO_URL:http://minio:9000}
-  access-key: ${MINIO_ACCESS_KEY}
-  secret-key: ${MINIO_SECRET_KEY}
+  url: http://172.20.0.2:9000
+  access-key: 7xdNttLFPaXF9dmnns58
+  secret-key: Ck4D19Rak5gL3v6T75scvZY5KExbITJ1osysxN2H
   bucket: nostra-tix
 spring:
   application:
@@ -16,7 +16,7 @@ spring:
       idle-timeout: 600000
       max-lifetime: 1800000
       maximum-pool-size: 10
-    url: jdbc:postgresql://127.0.0.1/m_tix
+    url: jdbc:postgresql://127.0.0.1:5433/m-tix
     username: postgres
     password: Welcome1!
   jpa:

@@ -1,5 +1,6 @@
 package com.tix.nostra.nostra_tix.projection;
 
+import java.math.BigDecimal;
 import java.util.Date;
 
 public interface ScheduleByIdProjection {
@@ -17,4 +18,8 @@ public interface ScheduleByIdProjection {
     String getTheaterName();
 
     String getStudioName();
+
+    Long getStudioId();
+
+    BigDecimal getPrice();
 }
