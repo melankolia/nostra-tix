@@ -24,4 +24,6 @@ public interface UserRepository extends JpaRepository<User, Long> {
     UserDetailProjection findByEmail(String email);
 
     User findByEmailAndPassword(String email, String password);
+
+    User findByEmailAndVerificationCode(String email, String verificationCode);
 }

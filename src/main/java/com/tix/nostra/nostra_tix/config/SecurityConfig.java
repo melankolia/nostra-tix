@@ -20,12 +20,15 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.tix.nostra.nostra_tix.security.filter.EmailAuthFilter;
+import com.tix.nostra.nostra_tix.security.filter.EmailOtpAuthFilter;
 import com.tix.nostra.nostra_tix.security.filter.JwtAuthFilter;
 import com.tix.nostra.nostra_tix.security.filter.UsernamePasswordAuthFilter;
 import com.tix.nostra.nostra_tix.security.handler.EmailSuccessHandler;
+import com.tix.nostra.nostra_tix.security.handler.EmailOtpAuthSuccessHandler;
 import com.tix.nostra.nostra_tix.security.handler.UsernamePasswordAuthFailureHandler;
 import com.tix.nostra.nostra_tix.security.handler.UsernamePasswordAuthSuccessHandler;
 import com.tix.nostra.nostra_tix.security.provider.EmailAuthProvider;
+import com.tix.nostra.nostra_tix.security.provider.EmailOtpAuthProvider;
 import com.tix.nostra.nostra_tix.security.provider.JwtAuthProvider;
 import com.tix.nostra.nostra_tix.security.provider.UsernamePasswordAuthProvider;
 import com.tix.nostra.nostra_tix.security.util.JwtTokenFactory;
@@ -38,9 +41,10 @@ public class SecurityConfig {
 
     private final static String AUTH_URL = "/api/auth/login";
     private final static String AUTH_EMAIL = "/api/auth/email";
+    private final static String AUTH_OTP = "/api/auth/otp";
     private final static String API = "/api/**";
 
-    private final static List<String> PERMS = List.of(AUTH_URL, AUTH_EMAIL);
+    private final static List<String> PERMS = List.of(AUTH_URL, AUTH_EMAIL, AUTH_OTP);
     private final static List<String> AUTH = List.of(API);
 
     @Autowired
@@ -53,9 +57,13 @@ public class SecurityConfig {
     private UsernamePasswordAuthProvider usernamePasswordAuthProvider;
 
     @Autowired
+    private EmailOtpAuthProvider emailOtpAuthProvider;
+
+    @Autowired
     void registerProvider(AuthenticationManagerBuilder auth) throws Exception {
         auth
                 .authenticationProvider(emailAuthProvider)
+                .authenticationProvider(emailOtpAuthProvider)
                 .authenticationProvider(usernamePasswordAuthProvider)
                 .authenticationProvider(jwtAuthProvider);
     }
@@ -84,7 +92,7 @@ public class SecurityConfig {
     @Bean
     public UsernamePasswordAuthFilter usernamePasswordAuthFilter(ObjectMapper objectMapper,
             UsernamePasswordAuthSuccessHandler successHandler,
-            AuthenticationFailureHandler failedHandler,
+            UsernamePasswordAuthFailureHandler failedHandler,
             AuthenticationManager manager) {
 
         UsernamePasswordAuthFilter filter = new UsernamePasswordAuthFilter(
@@ -115,12 +123,33 @@ public class SecurityConfig {
     }
 
     @Bean
+    public EmailOtpAuthFilter emailOtpAuthFilter(
+            ObjectMapper objectMapper,
+            EmailOtpAuthSuccessHandler successHandler,
+            AuthenticationFailureHandler failureHandler,
+            AuthenticationManager manager) {
+        EmailOtpAuthFilter filter = new EmailOtpAuthFilter(
+                AUTH_OTP, successHandler, failureHandler, objectMapper);
+        filter.setAuthenticationManager(manager);
+        return filter;
+    }
+
+    @Bean
+    public EmailOtpAuthSuccessHandler emailOtpAuthSuccessHandler(ObjectMapper objectMapper,
+            JwtTokenFactory jwtTokenFactory) {
+        return new EmailOtpAuthSuccessHandler(objectMapper, jwtTokenFactory);
+    }
+
+    @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http,
-            UsernamePasswordAuthFilter usernamePasswordAuthFilter, JwtAuthFilter jwtAuthFilter)
+            UsernamePasswordAuthFilter usernamePasswordAuthFilter,
+            JwtAuthFilter jwtAuthFilter,
+            EmailAuthFilter emailAuthFilter)
             throws Exception {
         http.authorizeHttpRequests(auth -> auth
                 .requestMatchers(AUTH_EMAIL).permitAll()
                 .requestMatchers(AUTH_URL).permitAll()
+                .requestMatchers(AUTH_OTP).permitAll()
                 .requestMatchers(API).authenticated())
                 .csrf(AbstractHttpConfigurer::disable)
                 .sessionManagement((sessionManagement) -> sessionManagement
