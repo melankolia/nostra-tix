@@ -1,5 +1,8 @@
 package com.tix.nostra.nostra_tix.service.Impl;
 
+import java.time.LocalDateTime;
+import java.util.UUID;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -68,5 +71,25 @@ public class UserServiceImpl implements UserService {
             throw new ResourceNotFoundException("User not found with email: " + email);
         }
         return new UserDetailResponseDTO(user.getName(), user.getEmail(), user.getPhoneNo());
+    }
+
+    @Override
+    public User sendVerificationCode(String email, String password) {
+
+        User user = userRepository.findByEmailAndPassword(email, password);
+
+        if (user == null) {
+            throw new ResourceNotFoundException("User not found with email: " + email);
+        }
+
+        String uuid = UUID.randomUUID().toString();
+        user.setVerificationCode(uuid.substring(uuid.length() - 6));
+
+        user.setExpiredTime(LocalDateTime.now().plusMinutes(5));
+
+        userRepository.save(user);
+
+        return user;
+
     }
 }

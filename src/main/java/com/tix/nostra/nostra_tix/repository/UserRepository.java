@@ -14,9 +14,14 @@ public interface UserRepository extends JpaRepository<User, Long> {
             SELECT u.id as id,
                    u.name as name,
                    u.email as email,
-                   u.phoneNo as phoneNo
+                   u.phoneNo as phoneNo,
+                   u.password as password,
+                   u.expiredTime as expiredTime,
+                   u.verificationCode as verificationCode
             FROM User u
             WHERE u.email = :email
             """)
     UserDetailProjection findByEmail(String email);
+
+    User findByEmailAndPassword(String email, String password);
 }
