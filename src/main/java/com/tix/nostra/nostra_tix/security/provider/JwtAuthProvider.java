@@ -4,10 +4,9 @@ import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import javax.crypto.SecretKey;
+
 import org.springframework.security.authentication.AuthenticationProvider;
-import org.springframework.security.authentication.BadCredentialsException;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.GrantedAuthority;
@@ -15,35 +14,32 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 
-import com.tix.nostra.nostra_tix.domain.User;
-import com.tix.nostra.nostra_tix.repository.UserRepository;
+import com.tix.nostra.nostra_tix.security.model.JwtAuthenticationToken;
+import com.tix.nostra.nostra_tix.security.model.RawAccessJwtToken;
+
+import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.Jws;
 
 @Component
-public class UsernamePasswordAuthProvider implements AuthenticationProvider {
+public class JwtAuthProvider implements AuthenticationProvider {
 
-    @Autowired
-    private UserRepository userRepository;
+    private final SecretKey key;
+
+    public JwtAuthProvider(SecretKey key) {
+        this.key = key;
+    }
 
     @Override
     public Authentication authenticate(Authentication authentication) throws AuthenticationException {
-        String email = authentication.getName();
-        String password = authentication.getCredentials().toString();
-
-        User user = userRepository.findByEmailOrPhoneNo(email, email);
-        if (user == null) {
-            throw new BadCredentialsException("Invalid email or password");
-        }
-
-        if (!user.getPassword().equals(password)) {
-            throw new BadCredentialsException("Invalid email or password");
-        }
-
-        List<String> scopes = List.of("ROLE_USER");
+        RawAccessJwtToken rawAccessJwtToken = (RawAccessJwtToken) authentication.getCredentials();
+        Jws<Claims> claims = rawAccessJwtToken.parseClaims(key);
+        String subject = claims.getPayload().getSubject();
+        List<String> scopes = claims.getPayload().get("scopes", List.class);
         List<GrantedAuthority> authorities = scopes.stream()
-                .map(SimpleGrantedAuthority::new)
-                .collect(Collectors.toList());
+                .map(SimpleGrantedAuthority::new).collect(Collectors.toList());
 
         UserDetails userDetails = new UserDetails() {
+
             @Override
             public Collection<? extends GrantedAuthority> getAuthorities() {
                 return authorities;
@@ -51,12 +47,12 @@ public class UsernamePasswordAuthProvider implements AuthenticationProvider {
 
             @Override
             public String getPassword() {
-                return user.getPassword();
+                return null;
             }
 
             @Override
             public String getUsername() {
-                return user.getEmail();
+                return subject;
             }
 
             @Override
@@ -80,11 +76,11 @@ public class UsernamePasswordAuthProvider implements AuthenticationProvider {
             }
         };
 
-        return new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
+        return new JwtAuthenticationToken(userDetails, authorities);
     }
 
     @Override
     public boolean supports(Class<?> authentication) {
-        return UsernamePasswordAuthenticationToken.class.isAssignableFrom(authentication);
+        return (JwtAuthenticationToken.class.isAssignableFrom(authentication));
     }
 }
