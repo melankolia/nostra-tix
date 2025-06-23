@@ -38,7 +38,7 @@ public class UsernamePasswordAuthProvider implements AuthenticationProvider {
             throw new BadCredentialsException("Invalid email or password");
         }
 
-        List<String> scopes = List.of("ROLE_USER");
+        List<String> scopes = List.of(user.getRole());
         List<GrantedAuthority> authorities = scopes.stream()
                 .map(SimpleGrantedAuthority::new)
                 .collect(Collectors.toList());

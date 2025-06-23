@@ -17,7 +17,8 @@ public interface UserRepository extends JpaRepository<User, Long> {
                    u.phoneNo as phoneNo,
                    u.password as password,
                    u.expiredTime as expiredTime,
-                   u.verificationCode as verificationCode
+                   u.verificationCode as verificationCode,
+                   u.role as role
             FROM User u
             WHERE u.email = :email
             """)
