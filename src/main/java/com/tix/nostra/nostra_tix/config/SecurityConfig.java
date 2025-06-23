@@ -38,13 +38,19 @@ import com.tix.nostra.nostra_tix.security.util.SkipPathRequestMatcher;
 @EnableMethodSecurity
 @EnableWebSecurity
 public class SecurityConfig {
+    // TODO: Desain Database (buat table baru OTP, Password dihapus, enkrip password
+    // dan enkrip otp)
+    // TODO: Validasi OTP tidak menggunakan email tapi pakai session id, ditambahin
+    // retry OTP jika gagal dicoba besok lagi
+    // TODO: Response email valid dengan engga ketika request OTP harusnya sama
 
+    private final static String AUTH_REGISTER = "/api/auth/register";
     private final static String AUTH_URL = "/api/auth/login";
     private final static String AUTH_EMAIL = "/api/auth/email";
     private final static String AUTH_OTP = "/api/auth/otp";
     private final static String API = "/api/**";
 
-    private final static List<String> PERMS = List.of(AUTH_URL, AUTH_EMAIL, AUTH_OTP);
+    private final static List<String> PERMS = List.of(AUTH_URL, AUTH_EMAIL, AUTH_OTP, AUTH_REGISTER);
     private final static List<String> AUTH = List.of(API);
 
     @Autowired
@@ -147,9 +153,7 @@ public class SecurityConfig {
             EmailAuthFilter emailAuthFilter)
             throws Exception {
         http.authorizeHttpRequests(auth -> auth
-                .requestMatchers(AUTH_EMAIL).permitAll()
-                .requestMatchers(AUTH_URL).permitAll()
-                .requestMatchers(AUTH_OTP).permitAll()
+                .requestMatchers(PERMS.toArray(new String[0])).permitAll()
                 .requestMatchers(API).authenticated())
                 .csrf(AbstractHttpConfigurer::disable)
                 .sessionManagement((sessionManagement) -> sessionManagement
