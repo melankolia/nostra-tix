@@ -41,7 +41,7 @@ public class EmailOtpAuthProvider implements AuthenticationProvider {
         if (!account.getVerificationCode().equals(authentication.getCredentials().toString()))
             throw new RuntimeException("Invalid OTP");
 
-        List<String> role = List.of("USER");
+        List<String> role = List.of(account.getRole());
 
         UserDetails userDetails = new UserDetails() {
             @Override

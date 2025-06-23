@@ -55,6 +55,7 @@ public class UserServiceImpl implements UserService {
         userToRegister.setEmail(user.email());
         userToRegister.setPhoneNo(user.phoneNo());
         userToRegister.setPassword(user.password());
+        userToRegister.setRole("ROLE_" + user.role());
 
         userRepository.save(userToRegister);
         return new UserRegisterResponseDTO(

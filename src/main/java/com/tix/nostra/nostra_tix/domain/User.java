@@ -2,6 +2,8 @@ package com.tix.nostra.nostra_tix.domain;
 
 import java.time.LocalDateTime;
 
+import org.hibernate.annotations.ColumnDefault;
+
 import jakarta.persistence.*;
 
 @Entity
@@ -29,6 +31,10 @@ public class User {
 
     @Column(nullable = false)
     private String verificationCode;
+
+    @Column(nullable = false)
+    @ColumnDefault("ROLE_USER")
+    private String role;
 
     public Long getId() {
         return id;
@@ -84,5 +90,13 @@ public class User {
 
     public void setVerificationCode(String verificationCode) {
         this.verificationCode = verificationCode;
+    }
+
+    public String getRole() {
+        return role;
+    }
+
+    public void setRole(String role) {
+        this.role = role;
     }
 }
