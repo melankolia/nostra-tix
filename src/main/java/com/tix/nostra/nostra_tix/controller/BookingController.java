@@ -2,6 +2,7 @@ package com.tix.nostra.nostra_tix.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -19,6 +20,7 @@ import com.tix.nostra.nostra_tix.service.BookingService;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
 
+@PreAuthorize("hasRole('USER')")
 @RestController
 @RequestMapping("/api/booking")
 public class BookingController {
