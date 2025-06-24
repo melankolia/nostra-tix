@@ -11,7 +11,7 @@ import org.springframework.security.web.authentication.AbstractAuthenticationPro
 import org.springframework.security.web.authentication.AuthenticationFailureHandler;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.tix.nostra.nostra_tix.security.LoginRequestDTO;
+import com.tix.nostra.nostra_tix.security.UserLoginRequestDTO;
 import com.tix.nostra.nostra_tix.security.handler.EmailSuccessHandler;
 import com.tix.nostra.nostra_tix.security.model.EmailAuthToken;
 
@@ -45,17 +45,13 @@ public class EmailAuthFilter extends AbstractAuthenticationProcessingFilter {
             BufferedReader reader = request.getReader();
             String requestBody = reader.lines().collect(Collectors.joining());
 
-            LoginRequestDTO loginRequest = objectMapper.readValue(requestBody, LoginRequestDTO.class);
+            UserLoginRequestDTO loginRequest = objectMapper.readValue(requestBody, UserLoginRequestDTO.class);
 
             if (loginRequest.email() == null || loginRequest.email().trim().isEmpty()) {
                 throw new BadCredentialsException("Email is required");
             }
 
-            if (loginRequest.password() == null || loginRequest.password().trim().isEmpty()) {
-                throw new BadCredentialsException("Password is required");
-            }
-
-            EmailAuthToken authRequest = new EmailAuthToken(loginRequest.email(), loginRequest.password());
+            EmailAuthToken authRequest = new EmailAuthToken(loginRequest.email());
             return this.getAuthenticationManager().authenticate(authRequest);
         } catch (IOException e) {
             throw new BadCredentialsException("Invalid request format");

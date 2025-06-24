@@ -4,18 +4,16 @@ import org.springframework.security.authentication.AbstractAuthenticationToken;
 
 public class EmailAuthToken extends AbstractAuthenticationToken {
     private final String email;
-    private final String password;
 
-    public EmailAuthToken(String email, String password) {
+    public EmailAuthToken(String email) {
         super(null);
         this.email = email;
-        this.password = password;
         this.setAuthenticated(false);
     }
 
     @Override
     public Object getCredentials() {
-        return password;
+        return null;
     }
 
     @Override

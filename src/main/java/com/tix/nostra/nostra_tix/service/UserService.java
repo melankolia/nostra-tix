@@ -13,5 +13,5 @@ public interface UserService {
 
     UserDetailResponseDTO getUserDetail(String email);
 
-    User sendVerificationCode(String email, String password);
+    User sendVerificationCode(String email);
 }

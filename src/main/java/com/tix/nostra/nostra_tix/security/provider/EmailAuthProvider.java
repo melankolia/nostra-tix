@@ -32,10 +32,9 @@ public class EmailAuthProvider implements AuthenticationProvider {
     public Authentication authenticate(Authentication authentication) throws AuthenticationException {
         EmailAuthToken token = (EmailAuthToken) authentication;
         String email = token.getPrincipal().toString();
-        String password = token.getCredentials().toString();
 
         try {
-            User user = userService.sendVerificationCode(email, password);
+            User user = userService.sendVerificationCode(email);
 
             if (user.getVerificationCode() == null) {
                 throw new RuntimeException("Verification code is null");
@@ -52,7 +51,7 @@ public class EmailAuthProvider implements AuthenticationProvider {
             throw new RuntimeException(e);
         }
 
-        return new EmailAuthToken(email, password);
+        return new EmailAuthToken(email);
     }
 
     @Override
