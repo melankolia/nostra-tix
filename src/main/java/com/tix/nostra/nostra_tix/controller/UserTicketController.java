@@ -14,9 +14,12 @@ import com.tix.nostra.nostra_tix.dto.ResultResponseDTO;
 import com.tix.nostra.nostra_tix.dto.UserTicketResponseDTO;
 import com.tix.nostra.nostra_tix.service.BookingService;
 
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+
 @PreAuthorize("hasRole('USER')")
 @RestController
 @RequestMapping("/api/user-tickets")
+@SecurityRequirement(name = "Bearer Authentication")
 public class UserTicketController {
 
     @Autowired

@@ -12,12 +12,14 @@ import com.tix.nostra.nostra_tix.dto.ResultPageResponseDTO;
 import com.tix.nostra.nostra_tix.dto.ScheduleTheaterDTO;
 import com.tix.nostra.nostra_tix.service.ScheduleService;
 
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.validation.constraints.NotNull;
 
 @PreAuthorize("hasRole('USER')")
 
 @RestController
 @RequestMapping("/api/schedules")
+@SecurityRequirement(name = "Bearer Authentication")
 public class ScheduleController {
 
     @Autowired

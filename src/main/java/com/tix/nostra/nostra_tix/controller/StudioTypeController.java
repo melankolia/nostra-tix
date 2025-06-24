@@ -13,9 +13,12 @@ import com.tix.nostra.nostra_tix.dto.ResultResponseDTO;
 import com.tix.nostra.nostra_tix.dto.StudioTypeLovDTO;
 import com.tix.nostra.nostra_tix.service.StudioTypeService;
 
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+
 @PreAuthorize("hasRole('USER')")
 @RestController
 @RequestMapping("/api/studio-types")
+@SecurityRequirement(name = "Bearer Authentication")
 public class StudioTypeController {
 
     @Autowired

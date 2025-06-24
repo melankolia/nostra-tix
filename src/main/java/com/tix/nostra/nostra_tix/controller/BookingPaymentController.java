@@ -11,9 +11,12 @@ import org.springframework.web.bind.annotation.RestController;
 import com.tix.nostra.nostra_tix.dto.ResultResponseDTO;
 import com.tix.nostra.nostra_tix.service.BookingService;
 
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+
 @PreAuthorize("hasRole('USER')")
 @RestController
 @RequestMapping("/api/booking-payment")
+@SecurityRequirement(name = "Bearer Authentication")
 public class BookingPaymentController {
 
     @Autowired

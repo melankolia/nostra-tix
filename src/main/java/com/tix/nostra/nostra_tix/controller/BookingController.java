@@ -17,12 +17,14 @@ import com.tix.nostra.nostra_tix.dto.BookingSeatResponseDTO;
 import com.tix.nostra.nostra_tix.dto.ResultResponseDTO;
 import com.tix.nostra.nostra_tix.service.BookingService;
 
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
 
 @PreAuthorize("hasRole('USER')")
 @RestController
 @RequestMapping("/api/booking")
+@SecurityRequirement(name = "Bearer Authentication")
 public class BookingController {
 
     @Autowired

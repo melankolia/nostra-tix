@@ -10,11 +10,15 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.tix.nostra.nostra_tix.domain.Movie;
 import com.tix.nostra.nostra_tix.service.MovieService;
+
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+
 import com.tix.nostra.nostra_tix.dto.ResultResponseDTO;
 
 @PreAuthorize("hasRole('USER')")
 @RestController
 @RequestMapping("/api/movies")
+@SecurityRequirement(name = "Bearer Authentication")
 public class MovieController {
 
     @Autowired
