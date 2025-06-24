@@ -1,5 +1,6 @@
 package com.tix.nostra.nostra_tix.config;
 
+import java.util.Arrays;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -48,9 +49,28 @@ public class SecurityConfig {
     private final static String AUTH_URL = "/api/auth/login";
     private final static String AUTH_EMAIL = "/api/auth/email";
     private final static String AUTH_OTP = "/api/auth/otp";
-    private final static String API = "/api/**";
 
-    private final static List<String> PERMS = List.of(AUTH_URL, AUTH_EMAIL, AUTH_OTP, AUTH_REGISTER);
+    private final static List<String> PERMIT_ENDPOINT_URL = List.of(
+            "/swagger-ui.html",
+            "/swagger-ui/index.html",
+            "/swagger-ui/index.css",
+            "/favicon.ico",
+            "/swagger-ui/swagger-ui.css",
+            "/swagger-ui/swagger-ui.css.map",
+            "/swagger-ui/swagger-ui-standalone-preset.js",
+            "/swagger-ui/swagger-ui-standalone-preset.js.map",
+            "/swagger-ui/swagger-ui-bundle.js",
+            "/swagger-ui/swagger-ui-bundle.js.map",
+            "/swagger-ui/favicon-32x32.png",
+            "/swagger-ui/swagger-initializer.js",
+            "/v3/api-docs/swagger-config",
+            "/v3/api-docs",
+            AUTH_URL,
+            AUTH_EMAIL,
+            AUTH_OTP,
+            AUTH_REGISTER);
+
+    private final static String API = "/api/**";
     private final static List<String> AUTH = List.of(API);
 
     @Autowired
@@ -110,7 +130,7 @@ public class SecurityConfig {
 
     @Bean
     public JwtAuthFilter jwtAuthFilter(AuthenticationFailureHandler failureHandler, AuthenticationManager authManager) {
-        SkipPathRequestMatcher matcher = new SkipPathRequestMatcher(PERMS, AUTH);
+        SkipPathRequestMatcher matcher = new SkipPathRequestMatcher(PERMIT_ENDPOINT_URL, AUTH);
         JwtAuthFilter filter = new JwtAuthFilter(matcher, failureHandler);
         filter.setAuthenticationManager(authManager);
         return filter;
@@ -153,7 +173,7 @@ public class SecurityConfig {
             EmailAuthFilter emailAuthFilter)
             throws Exception {
         http.authorizeHttpRequests(auth -> auth
-                .requestMatchers(PERMS.toArray(new String[0])).permitAll()
+                .requestMatchers(PERMIT_ENDPOINT_URL.toArray(new String[0])).permitAll()
                 .requestMatchers(API).authenticated())
                 .csrf(AbstractHttpConfigurer::disable)
                 .sessionManagement((sessionManagement) -> sessionManagement
