@@ -125,7 +125,8 @@ public class BookingServiceImpl implements BookingService {
                         ticket.getMovieImageURI(),
                         ticket.getTheaterName(),
                         ticket.getStudioName(),
-                        Arrays.asList(ticket.getSeatNumbers().split(", "))))
+                        Arrays.asList(ticket.getSeatNumbers().split(", ")),
+                        ticket.getStatus()))
                 .collect(Collectors.toList());
     }
 
@@ -143,7 +144,8 @@ public class BookingServiceImpl implements BookingService {
                 tickets.get(0).getMovieImageURI(),
                 tickets.get(0).getTheaterName(),
                 tickets.get(0).getStudioName(),
-                Arrays.asList(tickets.get(0).getSeatNumbers().split(", ")));
+                Arrays.asList(tickets.get(0).getSeatNumbers().split(", ")),
+                tickets.get(0).getStatus());
     }
 
     @Override
