@@ -43,7 +43,8 @@ public interface BookingRepository extends JpaRepository<Booking, Long> {
                             b.schedule.movie.imageURI as movieImageURI,
                             b.schedule.studio.theater.name as theaterName,
                             b.schedule.studio.name as studioName,
-                            function('string_agg', s.seatNumber, ', ') as seatNumbers
+                            function('string_agg', s.seatNumber, ', ') as seatNumbers,
+                            b.bookingStatusEnum as status
                      FROM Booking b
                      LEFT JOIN b.seats s
                      WHERE b.user.id = :userId
@@ -58,7 +59,8 @@ public interface BookingRepository extends JpaRepository<Booking, Long> {
                             b.schedule.movie.imageURI as movieImageURI,
                             b.schedule.studio.theater.name as theaterName,
                             b.schedule.studio.name as studioName,
-                            function('string_agg', s.seatNumber, ', ') as seatNumbers
+                            function('string_agg', s.seatNumber, ', ') as seatNumbers,
+                            b.bookingStatusEnum as status
                      FROM Booking b
                      LEFT JOIN b.seats s
                      WHERE b.id = :bookingId
