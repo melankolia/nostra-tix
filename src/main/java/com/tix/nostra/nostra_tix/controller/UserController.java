@@ -12,6 +12,7 @@ import com.tix.nostra.nostra_tix.dto.UserDetailResponseDTO;
 import com.tix.nostra.nostra_tix.dto.ResultResponseDTO;
 import com.tix.nostra.nostra_tix.service.UserService;
 
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
 
@@ -19,6 +20,7 @@ import jakarta.validation.constraints.NotBlank;
 
 @RestController
 @RequestMapping("/api/users")
+@SecurityRequirement(name = "Bearer Authentication")
 public class UserController {
 
     @Autowired

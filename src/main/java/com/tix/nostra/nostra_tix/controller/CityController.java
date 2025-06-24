@@ -14,9 +14,13 @@ import com.tix.nostra.nostra_tix.dto.ResultResponseDTO;
 import com.tix.nostra.nostra_tix.dto.TheaterCountCity;
 import com.tix.nostra.nostra_tix.service.CityService;
 
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+
 @PreAuthorize("hasRole('USER')")
 @RestController
 @RequestMapping("/api/cities")
+@SecurityRequirement(name = "Bearer Authentication")
+
 // /v1/city/{code}/cinema
 public class CityController {
 

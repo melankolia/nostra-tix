@@ -24,12 +24,14 @@ import com.tix.nostra.nostra_tix.projection.BookingListProjection;
 import com.tix.nostra.nostra_tix.service.BookingService;
 import com.tix.nostra.nostra_tix.service.MovieService;
 
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
 
 @PreAuthorize("hasRole('ADMIN')")
 @RestController
 @RequestMapping("/api/middle")
+@SecurityRequirement(name = "Bearer Authentication")
 public class MiddleController {
 
     @Autowired
