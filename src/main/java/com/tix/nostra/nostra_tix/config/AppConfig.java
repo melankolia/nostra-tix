@@ -16,12 +16,18 @@ import com.tix.nostra.nostra_tix.security.util.JwtTokenFactory;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
 import io.minio.MinioClient;
+import io.swagger.v3.oas.annotations.OpenAPIDefinition;
+import io.swagger.v3.oas.annotations.info.Info;
+import io.swagger.v3.oas.annotations.security.SecurityScheme;
+import io.swagger.v3.oas.annotations.enums.SecuritySchemeType;
 import jakarta.mail.Authenticator;
 import jakarta.mail.PasswordAuthentication;
 import jakarta.mail.Session;
 
 @ComponentScan(basePackages = "com.tix.nostra.nostra_tix")
 @Configuration
+@OpenAPIDefinition(info = @Info(title = "Nostra Tix API", version = "1.0.0"))
+@SecurityScheme(name = "Bearer Authentication", type = SecuritySchemeType.HTTP, bearerFormat = "JWT", scheme = "bearer")
 public class AppConfig {
 
     @Bean
