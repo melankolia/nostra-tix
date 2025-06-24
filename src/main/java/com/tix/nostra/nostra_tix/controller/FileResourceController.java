@@ -16,9 +16,13 @@ import com.tix.nostra.nostra_tix.dto.PresignedURLResponseDTO;
 import com.tix.nostra.nostra_tix.dto.ResultResponseDTO;
 import com.tix.nostra.nostra_tix.service.FileService;
 
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+
 @PreAuthorize("hasRole('USER')")
 @RestController
 @RequestMapping("/api/files")
+@SecurityRequirement(name = "Bearer Authentication")
+
 public class FileResourceController {
 
     @Autowired
