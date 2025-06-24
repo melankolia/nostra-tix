@@ -17,4 +17,6 @@ public interface UserDetailProjection {
     LocalDateTime getExpiredTime();
 
     String getVerificationCode();
+
+    String getRole();
 }

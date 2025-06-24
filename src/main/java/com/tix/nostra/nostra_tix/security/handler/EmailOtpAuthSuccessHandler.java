@@ -41,6 +41,7 @@ public class EmailOtpAuthSuccessHandler implements AuthenticationSuccessHandler 
         Map<String, String> responseBody = new HashMap<>();
         responseBody.put("result", "success");
         responseBody.put("token", token.getToken());
+        responseBody.put("email", userDetails.getUsername());
         response.setStatus(HttpStatus.OK.value());
         response.setContentType(MediaType.APPLICATION_JSON_VALUE);
 
