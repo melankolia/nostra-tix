@@ -71,26 +71,34 @@ public class UserServiceImpl implements UserService {
         if (user == null) {
             throw new ResourceNotFoundException("User not found with email: " + email);
         }
-        return new UserDetailResponseDTO(user.getName(), user.getEmail(), user.getPhoneNo());
+        return new UserDetailResponseDTO(user.getId(), user.getName(), user.getEmail(), user.getPhoneNo());
     }
 
     @Override
-    public User sendVerificationCode(String email, String password) {
+    public User sendVerificationCode(String email) {
 
-        User user = userRepository.findByEmailAndPassword(email, password);
+        UserDetailProjection user = userRepository.findByEmail(email);
 
         if (user == null) {
             throw new ResourceNotFoundException("User not found with email: " + email);
         }
 
+        User convertedUser = new User();
+        convertedUser.setId(user.getId());
+        convertedUser.setName(user.getName());
+        convertedUser.setEmail(user.getEmail());
+        convertedUser.setPhoneNo(user.getPhoneNo());
+        convertedUser.setPassword(user.getPassword());
+        convertedUser.setRole(user.getRole());
+
         String uuid = UUID.randomUUID().toString();
-        user.setVerificationCode(uuid.substring(uuid.length() - 6));
+        convertedUser.setVerificationCode(uuid.substring(uuid.length() - 6));
 
-        user.setExpiredTime(LocalDateTime.now().plusMinutes(5));
+        convertedUser.setExpiredTime(LocalDateTime.now().plusMinutes(5));
 
-        userRepository.save(user);
+        userRepository.save(convertedUser);
 
-        return user;
+        return convertedUser;
 
     }
 }
