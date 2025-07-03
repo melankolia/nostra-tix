@@ -5,22 +5,18 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
-import java.util.Comparator;
 import java.util.HashSet;
-import java.util.HashMap;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import com.tix.nostra.nostra_tix.domain.Booking;
 import com.tix.nostra.nostra_tix.domain.Schedule;
 import com.tix.nostra.nostra_tix.domain.Seat;
-import com.tix.nostra.nostra_tix.domain.SeatType;
 import com.tix.nostra.nostra_tix.domain.Studio;
-import com.tix.nostra.nostra_tix.domain.StudioType;
 import com.tix.nostra.nostra_tix.domain.User;
 import com.tix.nostra.nostra_tix.dto.BookingDTO;
 import com.tix.nostra.nostra_tix.dto.BookingSeatDTO;
@@ -33,12 +29,12 @@ import com.tix.nostra.nostra_tix.projection.BookingListProjection;
 import com.tix.nostra.nostra_tix.projection.BookingWithSeatsProjection;
 import com.tix.nostra.nostra_tix.projection.ScheduleByIdProjection;
 import com.tix.nostra.nostra_tix.projection.SeatByStudioIdProjection;
+import com.tix.nostra.nostra_tix.projection.UserDetailProjection;
 import com.tix.nostra.nostra_tix.projection.UserTicketProjection;
 import com.tix.nostra.nostra_tix.repository.BookingRepository;
 import com.tix.nostra.nostra_tix.repository.ScheduleRepository;
 import com.tix.nostra.nostra_tix.repository.SeatRepository;
 import com.tix.nostra.nostra_tix.repository.StudioRepository;
-import com.tix.nostra.nostra_tix.repository.StudioTypeRepository;
 import com.tix.nostra.nostra_tix.repository.UserRepository;
 import com.tix.nostra.nostra_tix.service.BookingService;
 import com.tix.nostra.nostra_tix.util.BookingStatusEnum;
@@ -195,8 +191,11 @@ public class BookingServiceImpl implements BookingService {
     @Override
     @Transactional
     public Long createBooking(Long scheduleId, BookingDTO bookingDTO) {
+
+        String email = SecurityContextHolder.getContext().getAuthentication().getName();
+
         // 1. Cek apakah user sudah punya booking aktif
-        List<Booking> existingBookings = bookingRepository.findByUserId(bookingDTO.userId());
+        List<Booking> existingBookings = bookingRepository.findByUserEmail(email);
         if (!existingBookings.isEmpty()) {
             Booking existingBooking = existingBookings.get(0);
             if (existingBooking.getExpiredDate().after(new Date()) &&
@@ -209,8 +208,11 @@ public class BookingServiceImpl implements BookingService {
         Schedule schedule = scheduleRepository.findById(scheduleId)
                 .orElseThrow(() -> new ResourceNotFoundException("Schedule tidak ditemukan"));
 
-        User user = userRepository.findById(bookingDTO.userId())
-                .orElseThrow(() -> new ResourceNotFoundException("User tidak ditemukan"));
+        User user = userRepository.findByEmail(email);
+
+        if (user == null) {
+            throw new ResourceNotFoundException("User tidak ditemukan");
+        }
 
         // 3. Ambil data kursi yang sudah dibooking
         List<BookingWithSeatsProjection> bookedSeats = bookingRepository.findBookingsWithSeatsByScheduleId(scheduleId);
