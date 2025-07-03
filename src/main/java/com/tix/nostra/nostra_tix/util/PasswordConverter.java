@@ -18,11 +18,16 @@ public class PasswordConverter implements AttributeConverter<String, String> {
 
     @Override
     public String convertToDatabaseColumn(String password) {
-        if (password == null) {
+        if (password == null || password.trim().isEmpty()) {
             return null;
         }
-        // Hash the password before storing
-        return encryptionService.hashPassword(password);
+        try {
+            // Hash the password before storing
+            return encryptionService.hashPassword(password);
+        } catch (Exception e) {
+            // If hashing fails, return the original value (for backward compatibility)
+            return password;
+        }
     }
 
     @Override

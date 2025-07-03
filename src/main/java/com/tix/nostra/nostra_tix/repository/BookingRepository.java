@@ -32,7 +32,10 @@ public interface BookingRepository extends JpaRepository<Booking, Long> {
 
        @Query("""
                      SELECT b.id as id,
-                            s.id as seatId
+                            s.id as seatId,
+                            b.schedule.id as scheduleId,
+                            b.schedule.studio.id as studioId,
+                            b.bookingStatusEnum as status
                      FROM Booking b
                      JOIN b.seats s
                      WHERE b.schedule.id = :scheduleId
@@ -70,5 +73,12 @@ public interface BookingRepository extends JpaRepository<Booking, Long> {
                               b.schedule.studio.theater.name, b.schedule.studio.name
                      """)
        List<UserTicketProjection> findTicketsByBookingId(@Param("bookingId") Long bookingId);
+
+       @Query("""
+                     SELECT b FROM Booking b
+                     WHERE b.expiredDate < CURRENT_TIMESTAMP
+                     AND b.bookingStatusEnum = 'PENDING'
+                     """)
+       List<Booking> findExpiredBookings();
 
 }
