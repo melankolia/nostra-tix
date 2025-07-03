@@ -107,8 +107,8 @@ public class BookingServiceImpl implements BookingService {
     }
 
     @Override
-    public List<UserTicketResponseDTO> findByUserId(Long userId) {
-        List<UserTicketProjection> tickets = bookingRepository.findTicketsByUserId(userId);
+    public List<UserTicketResponseDTO> findByUserEmail(String email) {
+        List<UserTicketProjection> tickets = bookingRepository.findTicketsByUserEmail(email);
 
         if (tickets.isEmpty()) {
             throw new ResourceNotFoundException("Ticket's not found");

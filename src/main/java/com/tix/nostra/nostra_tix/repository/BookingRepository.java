@@ -49,11 +49,11 @@ public interface BookingRepository extends JpaRepository<Booking, Long> {
                             b.bookingStatusEnum as status
                      FROM Booking b
                      LEFT JOIN b.seats s
-                     WHERE b.user.id = :userId
+                     WHERE b.user.email = :email
                      GROUP BY b.id, b.schedule.movie.name, b.schedule.movie.imageURI,
                               b.schedule.studio.theater.name, b.schedule.studio.name
                      """)
-       List<UserTicketProjection> findTicketsByUserId(@Param("userId") Long userId);
+       List<UserTicketProjection> findTicketsByUserEmail(@Param("email") String email);
 
        @Query("""
                      SELECT b.id as id,
