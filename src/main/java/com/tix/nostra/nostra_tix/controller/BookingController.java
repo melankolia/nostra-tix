@@ -44,9 +44,8 @@ public class BookingController {
     }
 
     @GetMapping("/{scheduleId}")
-    public ResponseEntity<ResultResponseDTO<BookingSeatResponseDTO>> findAll(@PathVariable Long scheduleId,
-            @RequestParam @NotNull Long studioId) {
-        BookingSeatResponseDTO bookingSeatResponseDTO = bookingService.findAll(scheduleId, studioId);
+    public ResponseEntity<ResultResponseDTO<BookingSeatResponseDTO>> findAll(@PathVariable Long scheduleId) {
+        BookingSeatResponseDTO bookingSeatResponseDTO = bookingService.findAll(scheduleId);
 
         ResultResponseDTO<BookingSeatResponseDTO> resultResponseDTO = new ResultResponseDTO<>(
                 "OK",

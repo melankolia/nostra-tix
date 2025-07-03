@@ -9,7 +9,7 @@ import com.tix.nostra.nostra_tix.projection.BookingListProjection;
 
 public interface BookingService {
 
-    BookingSeatResponseDTO findAll(Long scheduleId, Long studioId);
+    BookingSeatResponseDTO findAll(Long scheduleId);
 
     List<BookingListProjection> findAllBookingList();
 
