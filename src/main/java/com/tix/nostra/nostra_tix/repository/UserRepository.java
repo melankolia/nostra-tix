@@ -22,7 +22,9 @@ public interface UserRepository extends JpaRepository<User, Long> {
             FROM User u
             WHERE u.email = :email
             """)
-    UserDetailProjection findByEmail(String email);
+    UserDetailProjection findByUserEmail(String email);
+
+    User findByEmail(String email);
 
     User findByEmailAndPassword(String email, String password);
 

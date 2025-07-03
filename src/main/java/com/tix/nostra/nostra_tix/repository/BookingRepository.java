@@ -28,6 +28,8 @@ public interface BookingRepository extends JpaRepository<Booking, Long> {
 
        List<Booking> findByUserId(Long userId);
 
+       List<Booking> findByUserEmail(String email);
+
        @Query("""
                      SELECT b.id as id,
                             s.id as seatId

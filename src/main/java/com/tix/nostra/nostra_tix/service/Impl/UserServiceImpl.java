@@ -67,7 +67,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public UserDetailResponseDTO getUserDetail(String email) {
-        UserDetailProjection user = userRepository.findByEmail(email);
+        UserDetailProjection user = userRepository.findByUserEmail(email);
         if (user == null) {
             throw new ResourceNotFoundException("User not found with email: " + email);
         }
@@ -77,7 +77,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public User sendVerificationCode(String email) {
 
-        UserDetailProjection user = userRepository.findByEmail(email);
+        UserDetailProjection user = userRepository.findByUserEmail(email);
 
         if (user == null) {
             throw new ResourceNotFoundException("User not found with email: " + email);
