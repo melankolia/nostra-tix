@@ -15,8 +15,11 @@ import com.tix.nostra.nostra_tix.domain.Schedule;
 import com.tix.nostra.nostra_tix.domain.Studio;
 import com.tix.nostra.nostra_tix.domain.Theater;
 import com.tix.nostra.nostra_tix.dto.ResultPageResponseDTO;
+import com.tix.nostra.nostra_tix.dto.ScheduleDTO;
 import com.tix.nostra.nostra_tix.dto.ScheduleStudioDTO;
 import com.tix.nostra.nostra_tix.dto.ScheduleTheaterDTO;
+import com.tix.nostra.nostra_tix.dto.StudioDTO;
+import com.tix.nostra.nostra_tix.dto.TheaterDTO;
 import com.tix.nostra.nostra_tix.exception.ResourceNotFoundException;
 import com.tix.nostra.nostra_tix.repository.ScheduleRepository;
 import com.tix.nostra.nostra_tix.service.ScheduleService;
@@ -66,9 +69,27 @@ public class ScheduleServiceImpl implements ScheduleService {
         List<ScheduleTheaterDTO> theaterDTOs = schedulesByTheaterAndStudio.entrySet().stream()
                 .map(theaterEntry -> {
                     List<ScheduleStudioDTO> studioDTOs = theaterEntry.getValue().entrySet().stream()
-                            .map(studioEntry -> new ScheduleStudioDTO(studioEntry.getKey(), studioEntry.getValue()))
+                            .map(studioEntry -> {
+                                List<ScheduleDTO> scheduleDTOs = studioEntry.getValue().stream()
+                                        .map(schedule -> new ScheduleDTO(
+                                                schedule.getId(),
+                                                schedule.getShowTime().getTime() / 1000,
+                                                schedule.getEndShowTime().getTime() / 1000,
+                                                schedule.getPrice().longValue()))
+                                        .collect(Collectors.toList());
+
+                                return new ScheduleStudioDTO(
+                                        new StudioDTO(
+                                                studioEntry.getKey().getName(),
+                                                studioEntry.getKey().getStudioType().getName()),
+                                        scheduleDTOs);
+                            })
                             .collect(Collectors.toList());
-                    return new ScheduleTheaterDTO(theaterEntry.getKey(), studioDTOs);
+
+                    TheaterDTO theaterDTO = new TheaterDTO(theaterEntry.getKey().getId(),
+                            theaterEntry.getKey().getName());
+
+                    return new ScheduleTheaterDTO(theaterDTO, studioDTOs);
                 })
                 .collect(Collectors.toList());
 
