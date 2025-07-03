@@ -24,16 +24,16 @@ public class MovieController {
         return ResponseEntity.ok(new ResultResponseDTO<>("OK", movies));
     }
 
-    @GetMapping("/{id}")
-    public ResponseEntity<ResultResponseDTO<Movie>> findById(@PathVariable Long id) {
-        Movie movie = movieService.findById(id);
-        return ResponseEntity.ok(new ResultResponseDTO<>("OK", movie));
-    }
-
     @GetMapping("/upcoming")
     public ResponseEntity<ResultResponseDTO<List<Movie>>> findAllUpcoming() {
         List<Movie> movies = movieService.findAllUpcoming();
         return ResponseEntity.ok(new ResultResponseDTO<>("OK", movies));
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<ResultResponseDTO<Movie>> findById(@PathVariable Long id) {
+        Movie movie = movieService.findById(id);
+        return ResponseEntity.ok(new ResultResponseDTO<>("OK", movie));
     }
 
 }
