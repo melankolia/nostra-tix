@@ -29,7 +29,6 @@ import com.tix.nostra.nostra_tix.projection.BookingListProjection;
 import com.tix.nostra.nostra_tix.projection.BookingWithSeatsProjection;
 import com.tix.nostra.nostra_tix.projection.ScheduleByIdProjection;
 import com.tix.nostra.nostra_tix.projection.SeatByStudioIdProjection;
-import com.tix.nostra.nostra_tix.projection.UserDetailProjection;
 import com.tix.nostra.nostra_tix.projection.UserTicketProjection;
 import com.tix.nostra.nostra_tix.repository.BookingRepository;
 import com.tix.nostra.nostra_tix.repository.ScheduleRepository;
@@ -149,8 +148,16 @@ public class BookingServiceImpl implements BookingService {
         Booking booking = bookingRepository.findById(bookingId)
                 .orElseThrow(() -> new ResourceNotFoundException("Booking not found"));
 
+        if (!booking.getUser().getEmail().equals(SecurityContextHolder.getContext().getAuthentication().getName())) {
+            throw new ResourceNotFoundException("Booking can only be paid by the owner");
+        }
+
         if (booking.getExpiredDate().before(new Date())) {
             throw new ResourceNotFoundException("Booking expired");
+        }
+
+        if (booking.getStatus().equals(BookingStatusEnum.WAITING_TO_PAY)) {
+            throw new ResourceNotFoundException("Booking is waiting to pay");
         }
 
         if (booking.getStatus().equals(BookingStatusEnum.PAID)) {
@@ -173,6 +180,10 @@ public class BookingServiceImpl implements BookingService {
 
         if (booking.getExpiredDate().before(new Date())) {
             throw new ResourceNotFoundException("Booking expired");
+        }
+
+        if (booking.getStatus().equals(BookingStatusEnum.WAITING_TO_PAY)) {
+            throw new ResourceNotFoundException("Booking is waiting to pay");
         }
 
         if (booking.getStatus().equals(BookingStatusEnum.PAID)) {
@@ -199,7 +210,8 @@ public class BookingServiceImpl implements BookingService {
         if (!existingBookings.isEmpty()) {
             Booking existingBooking = existingBookings.get(0);
             if (existingBooking.getExpiredDate().after(new Date()) &&
-                    existingBooking.getStatus() == BookingStatusEnum.PENDING) {
+                    (existingBooking.getStatus() == BookingStatusEnum.PENDING ||
+                            existingBooking.getStatus() == BookingStatusEnum.WAITING_TO_PAY)) {
                 throw new DuplicateUserDataException("User sudah memiliki booking aktif");
             }
         }
