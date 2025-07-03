@@ -4,4 +4,8 @@ public interface BookingWithSeatsProjection {
     Long getId();
 
     Long getSeatId();
+
+    Long getScheduleId();
+
+    Long getStudioId();
 }

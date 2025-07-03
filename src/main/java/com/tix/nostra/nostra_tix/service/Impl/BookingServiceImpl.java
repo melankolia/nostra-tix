@@ -60,7 +60,7 @@ public class BookingServiceImpl implements BookingService {
     private StudioRepository studioRepository;
 
     @Override
-    public BookingSeatResponseDTO findAll(Long scheduleId, Long studioId) {
+    public BookingSeatResponseDTO findAll(Long scheduleId) {
         ScheduleByIdProjection schedule = scheduleRepository.findByIdProjectedBy(scheduleId);
         if (schedule == null) {
             throw new ResourceNotFoundException("Schedule not found");
@@ -75,11 +75,11 @@ public class BookingServiceImpl implements BookingService {
                 schedule.getTheaterName(),
                 schedule.getStudioName());
 
-        Studio studio = studioRepository.findById(studioId)
+        Studio studio = studioRepository.findById(schedule.getStudioId())
                 .orElseThrow(() -> new ResourceNotFoundException("Studio not found"));
 
         List<BookingWithSeatsProjection> bookingSeats = bookingRepository.findBookingsWithSeatsByScheduleId(scheduleId);
-        List<SeatByStudioIdProjection> seats = seatRepository.findByStudioIdProjectedBy(studioId);
+        List<SeatByStudioIdProjection> seats = seatRepository.findByStudioIdProjectedBy(schedule.getStudioId());
         List<BookingSeatDTO> bookingSeatsDTO = new ArrayList<>();
 
         for (SeatByStudioIdProjection seat : seats) {
@@ -161,7 +161,7 @@ public class BookingServiceImpl implements BookingService {
             throw new ResourceNotFoundException("Booking cancelled");
         }
 
-        booking.setStatus(BookingStatusEnum.PAID);
+        booking.setStatus(BookingStatusEnum.WAITING_TO_PAY);
         bookingRepository.save(booking);
         return true;
     }
@@ -199,7 +199,7 @@ public class BookingServiceImpl implements BookingService {
         if (!existingBookings.isEmpty()) {
             Booking existingBooking = existingBookings.get(0);
             if (existingBooking.getExpiredDate().after(new Date()) &&
-                    existingBooking.getStatus() == BookingStatusEnum.WAITING) {
+                    existingBooking.getStatus() == BookingStatusEnum.PENDING) {
                 throw new DuplicateUserDataException("User sudah memiliki booking aktif");
             }
         }
@@ -276,7 +276,7 @@ public class BookingServiceImpl implements BookingService {
         booking.setSchedule(schedule);
         booking.setUser(user);
         booking.setSeats(selectedSeats);
-        booking.setStatus(BookingStatusEnum.WAITING);
+        booking.setStatus(BookingStatusEnum.PENDING);
         booking.setOrderDate(new Date());
         booking.setTotalPrice(totalPrice);
         booking.setPaid(false);
@@ -301,11 +301,11 @@ public class BookingServiceImpl implements BookingService {
             throw new ResourceNotFoundException("Booking cancelled");
         }
 
-        if (booking.getStatus().equals(BookingStatusEnum.COMPLETED)) {
-            throw new ResourceNotFoundException("Booking already completed");
+        if (booking.getStatus().equals(BookingStatusEnum.PAID)) {
+            throw new ResourceNotFoundException("Booking already paid");
         }
 
-        booking.setStatus(BookingStatusEnum.COMPLETED);
+        booking.setStatus(BookingStatusEnum.PAID);
         bookingRepository.save(booking);
         return true;
     }
