@@ -13,7 +13,7 @@ public interface BookingService {
 
     List<BookingListProjection> findAllBookingList();
 
-    List<UserTicketResponseDTO> findByUserId(Long userId);
+    List<UserTicketResponseDTO> findByUserEmail(String email);
 
     UserTicketResponseDTO findByBookingId(Long bookingId);
 

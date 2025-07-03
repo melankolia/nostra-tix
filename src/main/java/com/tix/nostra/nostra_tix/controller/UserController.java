@@ -5,6 +5,7 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -17,8 +18,6 @@ import com.tix.nostra.nostra_tix.service.BookingService;
 import com.tix.nostra.nostra_tix.service.UserService;
 
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
-import jakarta.validation.Valid;
-import jakarta.validation.constraints.NotBlank;
 
 @PreAuthorize("hasRole('USER')")
 
@@ -33,22 +32,27 @@ public class UserController {
     @Autowired
     private BookingService bookingService;
 
-    @GetMapping("/{email}")
-    public ResponseEntity<ResultResponseDTO<UserDetailResponseDTO>> getUserDetail(
-            @PathVariable @Valid @NotBlank String email) {
+    @GetMapping
+    public ResponseEntity<ResultResponseDTO<UserDetailResponseDTO>> getUserDetail() {
+        String email = SecurityContextHolder.getContext().getAuthentication().getName();
+
         UserDetailResponseDTO userDetail = userService.getUserDetail(email);
+
         return ResponseEntity.ok(new ResultResponseDTO<>("OK", userDetail));
     }
 
-    @GetMapping("/tickets/{userId}")
-    public ResponseEntity<ResultResponseDTO<List<UserTicketResponseDTO>>> getUserTickets(@PathVariable Long userId) {
-        List<UserTicketResponseDTO> tickets = bookingService.findByUserId(userId);
+    @GetMapping("/tickets")
+    public ResponseEntity<ResultResponseDTO<List<UserTicketResponseDTO>>> getUserTickets() {
+
+        String email = SecurityContextHolder.getContext().getAuthentication().getName();
+        List<UserTicketResponseDTO> tickets = bookingService.findByUserEmail(email);
         return ResponseEntity.ok(new ResultResponseDTO<>("OK", tickets));
     }
 
-    @GetMapping("/tickets/{bookingId}/detail")
+    @GetMapping("/tickets/{bookingId}")
     public ResponseEntity<ResultResponseDTO<UserTicketResponseDTO>> getUserTicket(@PathVariable Long bookingId) {
         UserTicketResponseDTO ticket = bookingService.findByBookingId(bookingId);
         return ResponseEntity.ok(new ResultResponseDTO<>("OK", ticket));
     }
+
 }
