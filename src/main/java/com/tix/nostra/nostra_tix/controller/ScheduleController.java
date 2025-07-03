@@ -30,9 +30,14 @@ public class ScheduleController {
             @RequestParam @NotNull(message = "Movie ID is required") Long movieId,
             @RequestParam(required = false) Long studioTypeId,
             @RequestParam @NotNull(message = "City ID is required") Long cityId,
-            @RequestParam @NotNull(message = "Current date is required") Long currentDate,
+            @RequestParam(required = false) Long currentDate,
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size) {
+
+        // Set default value at runtime
+        if (currentDate == null) {
+            currentDate = System.currentTimeMillis() / 1000;
+        }
 
         return ResponseEntity.ok(scheduleService.findAll(movieId, studioTypeId, cityId, currentDate, page, size));
     }
