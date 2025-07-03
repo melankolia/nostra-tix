@@ -50,7 +50,9 @@ public class SecurityConfig {
     private final static String AUTH_EMAIL = "/api/v1/auth/email";
     private final static String AUTH_OTP = "/api/v1/auth/otp";
     private final static String CITY = "/api/v1/cities";
+    private final static String CITIES = "/api/v1/cities/**";
     private final static String MOVIE = "/api/v1/movies";
+    private final static String MOVIES = "/api/v1/movies/**";
 
     private final static List<String> PERMIT_ENDPOINT_URL = List.of(
             "/swagger-ui.html",
@@ -72,7 +74,9 @@ public class SecurityConfig {
             AUTH_OTP,
             AUTH_REGISTER,
             CITY,
-            MOVIE);
+            CITIES,
+            MOVIE,
+            MOVIES);
 
     private final static String API = "/api/v1/**";
     private final static List<String> AUTH = List.of(API);
