@@ -18,7 +18,7 @@ import jakarta.validation.constraints.NotNull;
 @PreAuthorize("hasRole('USER')")
 
 @RestController
-@RequestMapping("/api/schedules")
+@RequestMapping("/api/v1/schedules")
 @SecurityRequirement(name = "Bearer Authentication")
 public class ScheduleController {
 
@@ -33,6 +33,7 @@ public class ScheduleController {
             @RequestParam @NotNull(message = "Current date is required") Long currentDate,
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size) {
+
         return ResponseEntity.ok(scheduleService.findAll(movieId, studioTypeId, cityId, currentDate, page, size));
     }
 }
