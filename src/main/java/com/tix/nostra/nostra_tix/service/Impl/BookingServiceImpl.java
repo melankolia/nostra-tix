@@ -83,7 +83,9 @@ public class BookingServiceImpl implements BookingService {
 
         for (SeatByStudioIdProjection seat : seats) {
             boolean isBooked = bookingSeats.stream()
-                    .anyMatch(booking -> booking.getSeatId().equals(seat.getId()));
+                    .anyMatch(booking -> booking.getSeatId().equals(seat.getId()) &&
+                            booking.getStatus() != BookingStatusEnum.EXPIRED &&
+                            booking.getStatus() != BookingStatusEnum.CANCELLED);
 
             bookingSeatsDTO.add(new BookingSeatDTO(
                     seat.getId(),
@@ -168,6 +170,10 @@ public class BookingServiceImpl implements BookingService {
             throw new ResourceNotFoundException("Booking cancelled");
         }
 
+        if (booking.getStatus().equals(BookingStatusEnum.EXPIRED)) {
+            throw new ResourceNotFoundException("Booking expired");
+        }
+
         booking.setStatus(BookingStatusEnum.WAITING_TO_PAY);
         bookingRepository.save(booking);
         return true;
@@ -192,6 +198,10 @@ public class BookingServiceImpl implements BookingService {
 
         if (booking.getStatus().equals(BookingStatusEnum.CANCELLED)) {
             throw new ResourceNotFoundException("Booking already cancelled");
+        }
+
+        if (booking.getStatus().equals(BookingStatusEnum.EXPIRED)) {
+            throw new ResourceNotFoundException("Booking expired");
         }
 
         booking.setStatus(BookingStatusEnum.CANCELLED);
@@ -226,9 +236,11 @@ public class BookingServiceImpl implements BookingService {
             throw new ResourceNotFoundException("User tidak ditemukan");
         }
 
-        // 3. Ambil data kursi yang sudah dibooking
+        // 3. Ambil data kursi yang sudah dibooking (exclude cancelled bookings)
         List<BookingWithSeatsProjection> bookedSeats = bookingRepository.findBookingsWithSeatsByScheduleId(scheduleId);
         List<Long> bookedSeatIds = bookedSeats.stream()
+                .filter(booking -> booking.getStatus() != BookingStatusEnum.CANCELLED &&
+                        booking.getStatus() != BookingStatusEnum.EXPIRED)
                 .map(BookingWithSeatsProjection::getSeatId)
                 .collect(Collectors.toList());
 
@@ -259,7 +271,7 @@ public class BookingServiceImpl implements BookingService {
             SeatByStudioIdProjection kursi2 = allSeats.get(i + 1);
             SeatByStudioIdProjection kursi3 = allSeats.get(i + 2);
 
-            // Cek apakah kursi dipilih atau sudah dibooking
+            // Cek apakah kursi dipilih atau sudah dibooking (exclude cancelled bookings)
             boolean kursi1Terisi = selectedSeats.stream().anyMatch(s -> s.getId().equals(kursi1.getId()))
                     || bookedSeatIds.contains(kursi1.getId());
             boolean kursi2Terisi = selectedSeats.stream().anyMatch(s -> s.getId().equals(kursi2.getId()))
@@ -317,8 +329,36 @@ public class BookingServiceImpl implements BookingService {
             throw new ResourceNotFoundException("Booking already paid");
         }
 
+        if (booking.getStatus().equals(BookingStatusEnum.EXPIRED)) {
+            throw new ResourceNotFoundException("Booking expired");
+        }
+
         booking.setStatus(BookingStatusEnum.PAID);
+        booking.setPaid(true);
+        booking.setPaidDate(new Date());
         bookingRepository.save(booking);
         return true;
+    }
+
+    @Override
+    @Transactional
+    public void processExpiredBookings() {
+        List<Booking> expiredBookings = bookingRepository.findExpiredBookings();
+
+        if (expiredBookings.isEmpty()) {
+            System.out.println("No expired bookings found");
+            return;
+        }
+
+        System.out.println("Found " + expiredBookings.size() + " expired bookings to process");
+
+        for (Booking booking : expiredBookings) {
+            booking.setStatus(BookingStatusEnum.EXPIRED);
+            bookingRepository.save(booking);
+            System.out.println("Booking ID " + booking.getId() + " (User: " + booking.getUser().getEmail() +
+                    ", Movie: " + booking.getSchedule().getMovie().getName() + ") marked as EXPIRED");
+        }
+
+        System.out.println("Successfully processed " + expiredBookings.size() + " expired bookings");
     }
 }

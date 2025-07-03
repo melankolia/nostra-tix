@@ -41,6 +41,9 @@ public class EncryptionService {
      * Encrypt OTP using AES
      */
     public String encryptOTP(String otp) {
+        if (otp == null || otp.trim().isEmpty()) {
+            return null;
+        }
         try {
             SecretKeySpec secretKeySpec = generateKey();
             Cipher cipher = Cipher.getInstance("AES");
@@ -56,6 +59,9 @@ public class EncryptionService {
      * Decrypt OTP using AES
      */
     public String decryptOTP(String encryptedOTP) {
+        if (encryptedOTP == null || encryptedOTP.trim().isEmpty()) {
+            return null;
+        }
         try {
             SecretKeySpec secretKeySpec = generateKey();
             Cipher cipher = Cipher.getInstance("AES");

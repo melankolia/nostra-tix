@@ -18,19 +18,30 @@ public class OTPConverter implements AttributeConverter<String, String> {
 
     @Override
     public String convertToDatabaseColumn(String otp) {
-        if (otp == null) {
+        if (otp == null || otp.trim().isEmpty()) {
             return null;
         }
-        // Encrypt the OTP before storing
-        return encryptionService.encryptOTP(otp);
+        try {
+            // Encrypt the OTP before storing
+            return encryptionService.encryptOTP(otp);
+        } catch (Exception e) {
+            // If encryption fails, return the original value (for backward compatibility)
+            return otp;
+        }
     }
 
     @Override
     public String convertToEntityAttribute(String encryptedOTP) {
-        if (encryptedOTP == null) {
+        if (encryptedOTP == null || encryptedOTP.trim().isEmpty()) {
             return null;
         }
-        // Decrypt the OTP when reading from database
-        return encryptionService.decryptOTP(encryptedOTP);
+        try {
+            // Decrypt the OTP when reading from database
+            return encryptionService.decryptOTP(encryptedOTP);
+        } catch (Exception e) {
+            // If decryption fails, return the original value (for backward compatibility)
+            // This handles cases where the data might not be encrypted yet
+            return encryptedOTP;
+        }
     }
 }
