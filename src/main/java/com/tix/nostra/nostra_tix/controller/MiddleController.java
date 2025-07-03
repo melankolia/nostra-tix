@@ -49,7 +49,7 @@ public class MiddleController {
         return ResponseEntity.ok(response);
     }
 
-    @PutMapping("/booking/{bookingId}/completed")
+    @PutMapping("/booking/{bookingId}")
     public ResponseEntity<ResultResponseDTO<Boolean>> completeBooking(@PathVariable @NotNull Long bookingId) {
         Boolean result = bookingService.completeBooking(bookingId);
 
