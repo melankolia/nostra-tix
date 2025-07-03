@@ -45,10 +45,12 @@ public class SecurityConfig {
     // retry OTP jika gagal dicoba besok lagi
     // TODO: Response email valid dengan engga ketika request OTP harusnya sama
 
-    private final static String AUTH_REGISTER = "/api/auth/register";
-    private final static String AUTH_URL = "/api/auth/login";
-    private final static String AUTH_EMAIL = "/api/auth/email";
-    private final static String AUTH_OTP = "/api/auth/otp";
+    private final static String AUTH_REGISTER = "/api/v1/auth/register";
+    private final static String AUTH_URL = "/api/v1/auth/login";
+    private final static String AUTH_EMAIL = "/api/v1/auth/email";
+    private final static String AUTH_OTP = "/api/v1/auth/otp";
+    private final static String CITY = "/api/v1/cities";
+    private final static String MOVIE = "/api/v1/movies";
 
     private final static List<String> PERMIT_ENDPOINT_URL = List.of(
             "/swagger-ui.html",
@@ -68,9 +70,11 @@ public class SecurityConfig {
             AUTH_URL,
             AUTH_EMAIL,
             AUTH_OTP,
-            AUTH_REGISTER);
+            AUTH_REGISTER,
+            CITY,
+            MOVIE);
 
-    private final static String API = "/api/**";
+    private final static String API = "/api/v1/**";
     private final static List<String> AUTH = List.of(API);
 
     @Autowired

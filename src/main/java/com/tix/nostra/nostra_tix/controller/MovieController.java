@@ -9,13 +9,10 @@ import org.springframework.web.bind.annotation.*;
 import com.tix.nostra.nostra_tix.domain.Movie;
 import com.tix.nostra.nostra_tix.service.MovieService;
 
-import io.swagger.v3.oas.annotations.security.SecurityRequirement;
-
 import com.tix.nostra.nostra_tix.dto.ResultResponseDTO;
 
 @RestController
 @RequestMapping("/api/v1/movies")
-@SecurityRequirement(name = "Bearer Authentication")
 public class MovieController {
 
     @Autowired
