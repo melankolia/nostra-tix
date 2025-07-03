@@ -16,11 +16,15 @@ import com.tix.nostra.nostra_tix.exception.ResourceNotFoundException;
 import com.tix.nostra.nostra_tix.projection.UserDetailProjection;
 import com.tix.nostra.nostra_tix.repository.UserRepository;
 import com.tix.nostra.nostra_tix.service.UserService;
+import com.tix.nostra.nostra_tix.util.EncryptionService;
 
 @Service
 public class UserServiceImpl implements UserService {
     @Autowired
     private UserRepository userRepository;
+
+    @Autowired
+    private EncryptionService encryptionService;
 
     @Override
     public UserLoginDTO login(UserLoginDTO userLoginDTO) {
@@ -29,7 +33,7 @@ public class UserServiceImpl implements UserService {
             if (user == null) {
                 throw new RuntimeException("User not found with login: " + userLoginDTO.userLogin());
             }
-            if (!user.getPassword().equals(userLoginDTO.password())) {
+            if (!encryptionService.verifyPassword(userLoginDTO.password(), user.getPassword())) {
                 throw new RuntimeException("Invalid password for user: " + userLoginDTO.userLogin());
             }
             return new UserLoginDTO(user.getEmail(), user.getPassword(), user.getId());

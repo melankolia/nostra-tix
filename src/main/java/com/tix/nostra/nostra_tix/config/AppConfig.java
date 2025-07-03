@@ -12,6 +12,7 @@ import org.springframework.context.annotation.Configuration;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.tix.nostra.nostra_tix.security.util.JwtTokenFactory;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
@@ -53,6 +54,11 @@ public class AppConfig {
     @Bean
     public JwtTokenFactory jwtTokenFactory(Key secret) {
         return new JwtTokenFactory(secret);
+    }
+
+    @Bean
+    public BCryptPasswordEncoder bCryptPasswordEncoder() {
+        return new BCryptPasswordEncoder();
     }
 
     @Bean

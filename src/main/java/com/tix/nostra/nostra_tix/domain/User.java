@@ -6,6 +6,9 @@ import org.hibernate.annotations.ColumnDefault;
 
 import jakarta.persistence.*;
 
+import com.tix.nostra.nostra_tix.util.PasswordConverter;
+import com.tix.nostra.nostra_tix.util.OTPConverter;
+
 @Entity
 @Table(name = "users")
 public class User {
@@ -24,12 +27,14 @@ public class User {
     private String phoneNo;
 
     @Column(nullable = false)
+    @Convert(converter = PasswordConverter.class)
     private String password;
 
     @Column(nullable = false)
     private LocalDateTime expiredTime;
 
     @Column(nullable = false)
+    @Convert(converter = OTPConverter.class)
     private String verificationCode;
 
     @Column(nullable = false)
