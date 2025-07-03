@@ -17,12 +17,16 @@ import org.springframework.stereotype.Component;
 
 import com.tix.nostra.nostra_tix.domain.User;
 import com.tix.nostra.nostra_tix.repository.UserRepository;
+import com.tix.nostra.nostra_tix.util.EncryptionService;
 
 @Component
 public class UsernamePasswordAuthProvider implements AuthenticationProvider {
 
     @Autowired
     private UserRepository userRepository;
+
+    @Autowired
+    private EncryptionService encryptionService;
 
     @Override
     public Authentication authenticate(Authentication authentication) throws AuthenticationException {
@@ -34,7 +38,7 @@ public class UsernamePasswordAuthProvider implements AuthenticationProvider {
             throw new BadCredentialsException("Invalid email or password");
         }
 
-        if (!user.getPassword().equals(password)) {
+        if (!encryptionService.verifyPassword(password, user.getPassword())) {
             throw new BadCredentialsException("Invalid email or password");
         }
 
