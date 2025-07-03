@@ -30,7 +30,7 @@ import jakarta.validation.constraints.NotNull;
 
 @PreAuthorize("hasRole('ADMIN')")
 @RestController
-@RequestMapping("/api/middle")
+@RequestMapping("/api/v1/middle")
 @SecurityRequirement(name = "Bearer Authentication")
 public class MiddleController {
 

@@ -18,7 +18,7 @@ import jakarta.validation.constraints.NotNull;
 @PreAuthorize("hasRole('USER')")
 
 @RestController
-@RequestMapping("/api/schedules")
+@RequestMapping("/api/v1/schedules")
 @SecurityRequirement(name = "Bearer Authentication")
 public class ScheduleController {
 

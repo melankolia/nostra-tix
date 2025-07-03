@@ -18,7 +18,7 @@ import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 
 @PreAuthorize("hasRole('USER')")
 @RestController
-@RequestMapping("/api/cities")
+@RequestMapping("/api/v1/cities")
 @SecurityRequirement(name = "Bearer Authentication")
 
 // /v1/city/{code}/cinema

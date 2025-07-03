@@ -23,7 +23,7 @@ import jakarta.validation.constraints.NotNull;
 
 @PreAuthorize("hasRole('USER')")
 @RestController
-@RequestMapping("/api/booking")
+@RequestMapping("/api/v1/booking")
 @SecurityRequirement(name = "Bearer Authentication")
 public class BookingController {
 
