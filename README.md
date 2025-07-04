@@ -29,8 +29,10 @@ sudo docker compose up
 ```
 
 This command will start:
-- **PostgreSQL Database** on port 5433
+- **PostgreSQL Database** on port 5433 (with pre-seeded data)
 - **MinIO Object Storage** on port 9000 (API) and 9001 (Web UI)
+
+The database will be automatically initialized with sample data including movies, theaters, schedules, and other necessary data for testing the application.
 
 Wait for both services to be fully started before proceeding to the next step.
 
