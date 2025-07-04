@@ -77,7 +77,8 @@ public interface BookingRepository extends JpaRepository<Booking, Long> {
        @Query("""
                      SELECT b FROM Booking b
                      WHERE b.expiredDate < CURRENT_TIMESTAMP
-                     AND b.bookingStatusEnum = 'PENDING'
+                     AND (b.bookingStatusEnum = 'PENDING'
+                     OR b.bookingStatusEnum = 'WAITING_TO_PAY')
                      """)
        List<Booking> findExpiredBookings();
 
