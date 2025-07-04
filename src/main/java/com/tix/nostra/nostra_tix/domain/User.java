@@ -30,15 +30,15 @@ public class User {
     @Convert(converter = PasswordConverter.class)
     private String password;
 
-    @Column(nullable = false)
+    @Column
     private LocalDateTime expiredTime;
 
-    @Column(nullable = false)
+    @Column()
     @Convert(converter = OTPConverter.class)
     private String verificationCode;
 
     @Column(nullable = false)
-    @ColumnDefault("ROLE_USER")
+    @ColumnDefault("'ROLE_USER'")
     private String role;
 
     public Long getId() {
