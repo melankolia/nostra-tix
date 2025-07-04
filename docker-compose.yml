@@ -9,6 +9,8 @@ services:
       - "5433:5432"
     volumes:
       - m_tix_volume:/var/lib/postgresql/data
+      - ./init.sql:/docker-entrypoint-initdb.d/init.sql
+
   minio:
     image: quay.io/minio/minio:latest
     ports:
@@ -23,6 +25,4 @@ services:
 
 volumes:
   m_tix_volume:
-    external: true
   minio_volume:
-    external: true
